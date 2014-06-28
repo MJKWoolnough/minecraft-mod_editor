@@ -1,0 +1,8 @@
+item.EditorWand.name=Editor Wand
+mw.editor.Mode0=1. Select Block
+mw.editor.Mode1=2. Place Selected Block
+mw.editor.Mode2=3. Select Area Start
+mw.editor.Mode3=4. Select Area End
+mw.editor.Mode4=5. Fill Area with Selected Block
+mw.editor.Mode5=6. Replaced Matching Blocks in Area with Selected Block
+mw.editor.Mode6=7. Copy Area to Selected Block
