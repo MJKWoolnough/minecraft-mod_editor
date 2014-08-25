@@ -6,3 +6,6 @@ mw.editor.Mode3=4. Select Area End
 mw.editor.Mode4=5. Fill Area with Selected Block
 mw.editor.Mode5=6. Replaced Matching Blocks in Area with Selected Block
 mw.editor.Mode6=7. Copy Area to Selected Block
+mw.editor.blockAir=Air
+mw.editor.selectedBlock=Selected
+tile.ccmultipart.name=Multipart Block

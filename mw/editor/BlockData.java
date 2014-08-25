@@ -3,19 +3,24 @@ package mw.editor;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import mw.library.Blocks;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3Pool;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.ForgeDirection;
 import codechicken.multipart.MultipartHelper;
 
 import com.google.common.io.ByteArrayDataInput;
 
-public class BlockData {
-	protected int blockId;
-	protected int metadata;
-	protected NBTTagCompound nbtData;
+public class BlockData extends Blocks {
+	
+	private static final Vec3Pool vecPool = new Vec3Pool(3, 20);
 	
 	public BlockData get(World world, int x, int y, int z) {
 		this.blockId = world.getBlockId(x, y, z);
@@ -31,33 +36,6 @@ public class BlockData {
 			this.nbtData = null;
 		}
 		return this;
-	}
-	
-	public void set(World world, int x, int y, int z) {
-		world.setBlock(x, y, z, blockId, metadata, 2);
-		TileEntity te = this.getTileEntity(world, x, y, z);
-		if (te != null) {
-            world.setBlockTileEntity(x, y, z, te);
-			if (ModEditor.instance.forgeMicroParts && nbtData.getString("id").equals("savedMultipart")) {
-				MultipartHelper.sendDescPacket(world, te);
-			}
-			world.markBlockForUpdate(x, y, z);
-		}
-		world.setBlockMetadataWithNotify(x, y, z, metadata, 3);
-	}
-	
-	protected TileEntity getTileEntity(World world, int x, int y, int z) {
-		if (this.nbtData != null) {
-			NBTTagCompound nbtData = (NBTTagCompound) this.nbtData.copy();
-			nbtData.setInteger("x", x);
-			nbtData.setInteger("y", y);
-	        nbtData.setInteger("z", z);
-			if (ModEditor.instance.forgeMicroParts && nbtData.getString("id").equals("savedMultipart")) {
-				return MultipartHelper.createTileFromNBT(world, nbtData);
-			}
-			return TileEntity.createAndLoadEntity(nbtData);
-		}
-		return null;
 	}
 	
 	@Override
@@ -78,7 +56,7 @@ public class BlockData {
 	
 	public void write(DataOutputStream os) throws IOException {
 		os.writeInt(this.blockId);
-		os.writeInt(this.metadata);
+		os.writeByte(this.metadata);
 		if (this.nbtData != null) {
 			NBTBase.writeNamedTag(this.nbtData, os);
 		}
@@ -86,8 +64,11 @@ public class BlockData {
 
 	public BlockData load(ByteArrayDataInput in) throws IOException {
 		this.blockId = in.readInt();
-		this.metadata = in.readInt();
-		this.nbtData = (NBTTagCompound) NBTBase.readNamedTag(in);
+		this.metadata = in.readByte();
+		if (this.blockId > 0 && Block.blocksList[this.blockId].hasTileEntity(this.metadata)) {
+			this.nbtData = (NBTTagCompound) NBTBase.readNamedTag(in);
+		}
 		return this;
 	}
+
 }

@@ -16,12 +16,12 @@ public class Commands implements ICommand {
 
 	@Override
 	public String getCommandName() {
-		return "wand";
+		return ModEditor.instance.wandCmd;
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender var1) {
-		return "/wand\n";
+		return "/" + ModEditor.instance.wandCmd + "\n";
 	}
 
 	@Override

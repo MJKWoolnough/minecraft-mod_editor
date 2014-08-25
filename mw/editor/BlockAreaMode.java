@@ -1,5 +1,7 @@
 package mw.editor;
 
+import java.util.Iterator;
+
 import net.minecraft.world.World;
 
 public class BlockAreaMode {
@@ -126,6 +128,66 @@ public class BlockAreaMode {
 		return true;
 	}
 	
+	private class upRange implements Iterator<Integer> {
+		
+		private int start;
+		private int on;
+		private int stop;
+		
+		private upRange(int start, int stop) {
+			this.start = start;
+			this.on = start;
+			this.stop = stop;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return this.on <= this.stop;
+		}
+
+		@Override
+		public Integer next() {
+			int toRet = this.on;
+			this.on++;
+			return toRet;
+		}
+
+		@Override
+		public void remove() {
+			this.on = this.start;
+		}
+	}
+	
+	private class downRange implements Iterator<Integer> {
+		
+		private int start;
+		private int on;
+		private int stop;
+		
+		private downRange(int start, int stop) {
+			this.start = start;
+			this.on = start;
+			this.stop = stop;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return this.on >= this.stop;
+		}
+
+		@Override
+		public Integer next() {
+			int toRet = this.on;
+			this.on--;
+			return toRet;
+		}
+
+		@Override
+		public void remove() {
+			this.on = this.start;
+		}
+	}
+	
 	public boolean copyArea(World world, int x, int y, int z) {
 		if (!this.startSet || !this.endSet) {
 			return false;
@@ -143,12 +205,39 @@ public class BlockAreaMode {
 		int dy = y - this.area[1];
 		int dz = z - this.area[2];
 		
-		for (int i = minX; i <= maxX; i++) {
-			for (int j = minY; j <= maxY; j++) {
-				for (int k = minZ; k <= maxZ; k++) {
+		Iterator<Integer> xI;
+		Iterator<Integer> yI;
+		Iterator<Integer> zI;
+		
+		if (dx > 0) {
+			xI = new downRange(maxX, minX);
+		} else {
+			xI = new upRange(minX, maxX);
+		}
+		
+		if (dy > 0) {
+			yI = new downRange(maxY, minY);
+		} else {
+			yI = new upRange(minY, maxY);
+		}
+		
+		if (dz > 0) {
+			zI = new downRange(maxZ, minZ);
+		} else {
+			zI = new upRange(minZ, maxZ);
+		}
+		
+		while(xI.hasNext()) {
+			int i = xI.next().intValue();
+			while(yI.hasNext()) {
+				int j = yI.next().intValue();
+				while(zI.hasNext()) {
+					int k = zI.next().intValue();
 					bd.get(world, i, j, k).set(world, i + dx, j + dy, k + dz);
 				}
+				zI.remove();
 			}
+			yI.remove();
 		}
 		
 		
