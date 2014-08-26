@@ -20,38 +20,8 @@ import com.google.common.io.ByteArrayDataInput;
 
 public class BlockData extends Blocks {
 	
-	private static final Vec3Pool vecPool = new Vec3Pool(3, 20);
-	
 	public BlockData get(World world, int x, int y, int z) {
-		this.blockId = world.getBlockId(x, y, z);
-		this.metadata = world.getBlockMetadata(x, y, z);
-		if (this.blockId > 0 && Block.blocksList[this.blockId].hasTileEntity(this.metadata)) {
-			this.nbtData = new NBTTagCompound();
-			TileEntity te =	world.getBlockTileEntity(x, y, z);
-			te.writeToNBT(this.nbtData);
-			this.nbtData.removeTag("x");
-			this.nbtData.removeTag("y");
-			this.nbtData.removeTag("z");
-		} else {
-			this.nbtData = null;
-		}
-		return this;
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof BlockData)) {
-			return false;
-		} 
-		BlockData b = (BlockData) o;
-		if (b.blockId == this.blockId && b.metadata == this.metadata) {
-			if (b.nbtData == null && this.nbtData == null) {
-				return true;
-			} else if (b.nbtData != null && this.nbtData != null) {
-				return b.nbtData.equals(this.nbtData);
-			}
-		}
-		return false;
+		return (BlockData) super.get(world, x, y,  z);
 	}
 	
 	public void write(DataOutputStream os) throws IOException {
