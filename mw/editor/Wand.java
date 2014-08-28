@@ -75,6 +75,10 @@ public class Wand extends Item {
 					//Copy Area to Selected Block
 					bam.copyArea(world, x, y, z);
 					break;
+				case 7:
+					//Copy Area to Selected Block
+					bam.fillAreaTo(world, x, y, z);
+					break;
 				}
 			} else { //change mode
 				EditorPacketHandler.sendModeChange((Player) player, ModEditor.instance.pt.getPlayerData(player).changeMode());

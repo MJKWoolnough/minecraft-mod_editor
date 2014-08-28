@@ -17,6 +17,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
 
@@ -25,6 +26,8 @@ import org.lwjgl.opengl.GL11;
 public class WandGUI {
 
 	private static final Minecraft mc = Minecraft.getMinecraft();
+	private int count = 0;
+	private ForgeDirection direction;
 
 	@ForgeSubscribe(priority = EventPriority.NORMAL)
 	public void onRenderWorld(RenderWorldLastEvent event) {
@@ -33,6 +36,7 @@ public class WandGUI {
 			if (is != null && is.itemID == ModEditor.instance.wandId + 256) {
 				BlockAreaMode bam = ModEditor.instance.bam;
 				int[] area = ModEditor.instance.bam.area;
+				int[] mmArea = ModEditor.instance.bam.mmArea;
 				double posX = this.mc.thePlayer.prevPosX + (this.mc.thePlayer.posX - this.mc.thePlayer.prevPosX) * event.partialTicks;
 				double posY = this.mc.thePlayer.prevPosY + (this.mc.thePlayer.posY - this.mc.thePlayer.prevPosY) * event.partialTicks;
 				double posZ = this.mc.thePlayer.prevPosZ + (this.mc.thePlayer.posZ - this.mc.thePlayer.prevPosZ) * event.partialTicks;
@@ -77,31 +81,58 @@ public class WandGUI {
 					GL11.glDepthFunc(GL11.GL_LEQUAL);
 					this.renderBox(x1, y1, z1, x1 + 1, y1 + 1, z1 + 1, 255, 255, 255, 127);
 				}
+				this.count = 0;
 				if (bam.startSet || bam.endSet) {
 					
 					if (bam.startSet && bam.endSet) {
-						int minX = min(area[0], area[3]);
-						int maxX = max(area[0], area[3]);
-						int minY = min(area[1], area[4]);
-						int maxY = max(area[1], area[4]);
-						int minZ = min(area[2], area[5]);
-						int maxZ = max(area[2], area[5]);
-						GL11.glDepthFunc(GL11.GL_GREATER);
-						this.renderBox(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, 0, 255, 0, 63);
-						GL11.glDepthFunc(GL11.GL_LEQUAL);
-						this.renderBox(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, 0, 255, 0, 127);
 						
-						if (bam.mode == 6) {
+						GL11.glDepthFunc(GL11.GL_GREATER);
+						this.renderBox(mmArea[0], mmArea[1], mmArea[2], mmArea[3] + 1, mmArea[4] + 1, mmArea[5] + 1, 0, 255, 0, 63);
+						GL11.glDepthFunc(GL11.GL_LEQUAL);
+						this.renderBox(mmArea[0], mmArea[1], mmArea[2], mmArea[3] + 1, mmArea[4] + 1, mmArea[5] + 1, 0, 255, 0, 127);
+						
+						boolean skip = true;
+						
+						if (bam.mode == 7) {
+							ForgeDirection direction = bam.fillAreaDirection(x1, y1, z1);
+							if (direction != null) {
+								skip = false;
+								this.direction = direction;
+								int startX = mmArea[0];
+								int startY = mmArea[1];
+								int startZ = mmArea[2];
+								
+								int width  = mmArea[3] - mmArea[0] + 1;
+								int height = mmArea[4] - mmArea[1] + 1;
+								int depth  = mmArea[5] - mmArea[2] + 1;
+								
+								
+								if ((direction.ordinal() & 1) == 0) {
+									this.count = direction.offsetX * (x1 - startX - width + 1) / width + direction.offsetY * (y1 - startY - height + 1) / height + direction.offsetZ * (z1 - startZ - depth + 1) / depth;
+									direction = direction.getOpposite();
+									startX = mmArea[3];
+									startY = mmArea[4];
+									startZ = mmArea[5];
+								} else {
+									this.count = direction.offsetX * (x1 - startX) / width + direction.offsetY * (y1 - startY) / height + direction.offsetZ * (z1 - startZ) / depth;
+								}
+								
+								x1 = area[0] + width  * ((direction.offsetX * (x1 - startX)) / width);
+								y1 = area[1] + height * ((direction.offsetY * (y1 - startY)) / height);
+								z1 = area[2] + depth  * ((direction.offsetZ * (z1 - startZ)) / depth);
+							}
+						}
+						if (bam.mode == 6 || (bam.mode == 7 && !skip)) {
 			                int x2 = x1 + area[3] - area[0];
 			                int y2 = y1 + area[4] - area[1];
 			                int z2 = z1 + area[5] - area[2];
 			                
-			                minX = min(x1, x2);
-							maxX = max(x1, x2);
-							minY = min(y1, y2);
-							maxY = max(y1, y2);
-							minZ = min(z1, z2);
-							maxZ = max(z1, z2);
+			                int minX = min(x1, x2);
+			                int maxX = max(x1, x2);
+			                int minY = min(y1, y2);
+			                int maxY = max(y1, y2);
+			                int minZ = min(z1, z2);
+			                int maxZ = max(z1, z2);
 							
 							GL11.glDepthFunc(GL11.GL_GREATER);
 							this.renderBox(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, 127, 127, 127, 63);
@@ -154,7 +185,11 @@ public class WandGUI {
 			BlockAreaMode bam = ModEditor.instance.bam;
 			if (is != null && is.itemID == ModEditor.instance.wandId + 256 && bam.mode >= 0) {
 				FontRenderer fr = RenderManager.instance.getFontRenderer();
-				fr.drawStringWithShadow(I18n.getString("mw.editor.Mode" + ((Integer)bam.mode).toString()), 2, 2, 0xffffff);
+				String extra = "";
+				if (bam.mode == 7 && count > 0) {
+					extra = " (" + ((Integer)count).toString() + " " + this.direction.toString() + ")";
+				}
+				fr.drawStringWithShadow(I18n.getString("mw.editor.Mode" + ((Integer)bam.mode).toString()) + extra, 2, 2, 0xffffff);
 				String blockName;
 				if (bam.block.blockId == 0) {
 					blockName = I18n.getString("mw.editor.blockAir");

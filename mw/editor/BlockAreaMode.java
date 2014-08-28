@@ -3,6 +3,7 @@ package mw.editor;
 import java.util.Iterator;
 
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public class BlockAreaMode {
 	
@@ -12,12 +13,13 @@ public class BlockAreaMode {
 	protected boolean endSet = false;
 	
 	protected final int[] area = new int[6];
+	protected final int[] mmArea = new int[6];
 	
 	protected int mode = -1;
 	
 	public int changeMode() {
 		this.mode++;
-		if (this.mode > 6) {
+		if (this.mode > 7) {
 			this.mode = 0;
 		}
 		return this.mode;
@@ -55,6 +57,12 @@ public class BlockAreaMode {
 		this.area[0] = x;
 		this.area[1] = y;
 		this.area[2] = z;
+		this.mmArea[0] = min(x, this.area[3]);
+		this.mmArea[1] = min(y, this.area[4]);
+		this.mmArea[2] = min(z, this.area[5]);
+		this.mmArea[3] = max(x, this.area[3]);
+		this.mmArea[4] = max(y, this.area[4]);
+		this.mmArea[5] = max(z, this.area[5]);
 		this.startSet = true;
 	}
 	
@@ -62,6 +70,12 @@ public class BlockAreaMode {
 		this.area[3] = x;
 		this.area[4] = y;
 		this.area[5] = z;
+		this.mmArea[0] = min(this.area[0], x);
+		this.mmArea[1] = min(this.area[1], y);
+		this.mmArea[2] = min(this.area[2], z);
+		this.mmArea[3] = max(this.area[0], x);
+		this.mmArea[4] = max(this.area[1], y);
+		this.mmArea[5] = max(this.area[2], z);
 		this.endSet = true;
 	}
 	
@@ -75,18 +89,11 @@ public class BlockAreaMode {
 			return false;
 		}
 		
-		int minX = min(this.area[0], this.area[3]);
-		int maxX = max(this.area[0], this.area[3]);
-		int minY = min(this.area[1], this.area[4]);
-		int maxY = max(this.area[1], this.area[4]);
-		int minZ = min(this.area[2], this.area[5]);
-		int maxZ = max(this.area[2], this.area[5]);
-		
 		BlockData bd = new BlockData();
 		
-		for (int i = minX; i <= maxX; i++) {
-			for (int j = minY; j <= maxY; j++) {
-				for (int k = minZ; k <= maxZ; k++) {
+		for (int i = this.mmArea[0]; i <= this.mmArea[3]; i++) {
+			for (int j = this.mmArea[1]; j <= this.mmArea[4]; j++) {
+				for (int k = this.mmArea[2]; k <= this.mmArea[5]; k++) {
 					bd.get(world, i, j, k);
 					if (matchBlock.equals(bd)) {
 						this.block.set(world, i, j, k);
@@ -109,18 +116,12 @@ public class BlockAreaMode {
 		if (this.block == null || !this.startSet || !this.endSet) {
 			return false;
 		}
-		int minX = min(this.area[0], this.area[3]);
-		int maxX = max(this.area[0], this.area[3]);
-		int minY = min(this.area[1], this.area[4]);
-		int maxY = max(this.area[1], this.area[4]);
-		int minZ = min(this.area[2], this.area[5]);
-		int maxZ = max(this.area[2], this.area[5]);
 		
 		BlockData bd = new BlockData();
 		
-		for (int i = minX; i <= maxX; i++) {
-			for (int j = minY; j <= maxY; j++) {
-				for (int k = minZ; k <= maxZ; k++) {
+		for (int i = this.mmArea[0]; i <= this.mmArea[3]; i++) {
+			for (int j = this.mmArea[1]; j <= this.mmArea[4]; j++) {
+				for (int k = this.mmArea[2]; k <= this.mmArea[5]; k++) {
 					this.block.set(world, i, j, k);
 				}
 			}
@@ -192,12 +193,6 @@ public class BlockAreaMode {
 		if (!this.startSet || !this.endSet) {
 			return false;
 		}
-		int minX = min(this.area[0], this.area[3]);
-		int maxX = max(this.area[0], this.area[3]);
-		int minY = min(this.area[1], this.area[4]);
-		int maxY = max(this.area[1], this.area[4]);
-		int minZ = min(this.area[2], this.area[5]);
-		int maxZ = max(this.area[2], this.area[5]);
 		
 		BlockData bd = new BlockData();
 		
@@ -210,21 +205,21 @@ public class BlockAreaMode {
 		Iterator<Integer> zI;
 		
 		if (dx > 0) {
-			xI = new downRange(maxX, minX);
+			xI = new downRange(this.mmArea[3], this.mmArea[0]);
 		} else {
-			xI = new upRange(minX, maxX);
+			xI = new upRange(this.mmArea[0], this.mmArea[3]);
 		}
 		
 		if (dy > 0) {
-			yI = new downRange(maxY, minY);
+			yI = new downRange(this.mmArea[4], this.mmArea[1]);
 		} else {
-			yI = new upRange(minY, maxY);
+			yI = new upRange(this.mmArea[1], this.mmArea[4]);
 		}
 		
 		if (dz > 0) {
-			zI = new downRange(maxZ, minZ);
+			zI = new downRange(this.mmArea[5], this.mmArea[2]);
 		} else {
-			zI = new upRange(minZ, maxZ);
+			zI = new upRange(this.mmArea[2], this.mmArea[5]);
 		}
 		
 		while(xI.hasNext()) {
@@ -256,5 +251,73 @@ public class BlockAreaMode {
 			return b;
 		}
 		return a;
+	}
+	
+	public ForgeDirection fillAreaDirection(int x, int y, int z) {
+		if (x >= this.mmArea[0] && x <= this.mmArea[3] && y >= this.mmArea[1] && y <= this.mmArea[4]) {
+			if (z < this.mmArea[2]) {
+				return ForgeDirection.NORTH;
+			} else if (z > this.mmArea[5]) {
+				return ForgeDirection.SOUTH;
+			}
+		} else if (x >= this.mmArea[0] && x <= this.mmArea[3] && z >= this.mmArea[2] && z <= this.mmArea[5]) {
+			if (y < this.mmArea[1]) {
+				return ForgeDirection.DOWN;
+			} else if (y > this.mmArea[4]) {
+				return ForgeDirection.UP;
+			}
+		} else if (y >= this.mmArea[1] && y <= this.mmArea[4] && z >= this.mmArea[2] && z <= this.mmArea[5]) {
+			if (x < this.mmArea[0]) {
+				return ForgeDirection.WEST;
+			} else if (x > this.mmArea[3]) {
+				return ForgeDirection.EAST;
+			}
+		}
+		return null;
+	}
+
+	public boolean fillAreaTo(World world, int x, int y, int z) {
+		if (!this.startSet || !this.endSet) {
+			return false;
+		}
+		ForgeDirection direction = this.fillAreaDirection(x, y, z);
+		if (direction == null) {
+			return false;
+		}
+		
+		int width  = this.mmArea[3] - this.mmArea[0] + 1;
+		int height = this.mmArea[4] - this.mmArea[1] + 1;
+		int depth  = this.mmArea[5] - this.mmArea[2] + 1;
+		
+		int count;
+		
+		if ((direction.ordinal() & 1) == 0) {
+			count = direction.offsetX * (x - mmArea[0] - width + 1) / width + direction.offsetY * (y - mmArea[1] - height + 1) / height + direction.offsetZ * (z - mmArea[2] - depth + 1) / depth;
+		} else {
+			count = direction.offsetX * (x - mmArea[0]) / width + direction.offsetY * (y - mmArea[1]) / height + direction.offsetZ * (z - mmArea[2]) / depth;
+		}
+		
+		x = area[0];
+		y = area[1];
+		z = area[2];
+		
+		BlockData bd = new BlockData();
+		
+		for (; count > 0; count--) {
+			x += width  * direction.offsetX;
+			y += height * direction.offsetY;
+			z += depth  * direction.offsetZ;
+			int dx = x - this.area[0];
+			int dy = y - this.area[1];
+			int dz = z - this.area[2];
+			for (int i = mmArea[0]; i <= mmArea[3]; i++) {
+				for (int j = mmArea[1]; j <= mmArea[4]; j++) {
+					for (int k = mmArea[2]; k <= mmArea[5]; k++) {
+							bd.get(world, i, j, k).set(world, i + dx, j + dy, k + dz);
+					}
+				}
+			}
+		}
+		return true;
 	}
 }
