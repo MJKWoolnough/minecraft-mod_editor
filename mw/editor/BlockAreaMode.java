@@ -2,6 +2,7 @@ package mw.editor;
 
 import java.util.Iterator;
 
+import mw.library.BlockManipulator;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
@@ -16,6 +17,7 @@ public class BlockAreaMode {
 	protected final int[] mmArea = new int[6];
 	
 	protected int mode = -1;
+	protected int rmode = -1;
 	
 	public int changeMode() {
 		this.mode++;
@@ -25,12 +27,30 @@ public class BlockAreaMode {
 		return this.mode;
 	}
 	
+	public int changeRotatorMode() {
+		if (this.startSet && this.endSet) {
+			this.rmode++;
+			if (this.rmode > 4 || (this.rmode > 2 && this.mmArea[3] - this.mmArea[0] != this.mmArea[5] - this.mmArea[2])) {
+				this.rmode = 0;
+			}
+		}
+		return this.rmode;
+	}
+	
 	public void setMode(int modeId) {
 		this.mode = modeId;
 	}
 	
+	public void setRotatorMode(int modeId) {
+		this.rmode = modeId;
+	}
+	
 	public int getMode() {
 		return this.mode;
+	}
+	
+	public int getRotatorMode() {
+		return this.rmode;
 	}
 	
 	public void getBlock(World world, int x, int y, int z) {
@@ -64,6 +84,9 @@ public class BlockAreaMode {
 		this.mmArea[4] = max(y, this.area[4]);
 		this.mmArea[5] = max(z, this.area[5]);
 		this.startSet = true;
+		if (this.rmode > 2 && this.mmArea[3] - this.mmArea[0] != this.mmArea[5] - this.mmArea[2]) {
+			this.rmode = -1;
+		}
 	}
 	
 	public void addEndPos(int x, int y, int z) {
@@ -77,6 +100,9 @@ public class BlockAreaMode {
 		this.mmArea[4] = max(this.area[1], y);
 		this.mmArea[5] = max(this.area[2], z);
 		this.endSet = true;
+		if (this.rmode > 2 && this.mmArea[3] - this.mmArea[0] != this.mmArea[5] - this.mmArea[2]) {
+			this.rmode = -1;
+		}
 	}
 	
 	public void resetArea() {
@@ -195,6 +221,7 @@ public class BlockAreaMode {
 		}
 		
 		BlockData bd = new BlockData();
+		bd.notifyChange = false;
 		
 		int dx = x - this.area[0];
 		int dy = y - this.area[1];
@@ -235,7 +262,7 @@ public class BlockAreaMode {
 			yI.remove();
 		}
 		
-		
+		this.notifyBlockChanges(world, mmArea[0] + dx, mmArea[1] + dy, mmArea[2] + dz, mmArea[3] + dx, mmArea[4] + dy, mmArea[5] + dz);
 		return true;
 	}
 	
@@ -302,22 +329,203 @@ public class BlockAreaMode {
 		z = area[2];
 		
 		BlockData bd = new BlockData();
+		//bd.notifyChange = false;
 		
-		for (; count > 0; count--) {
-			x += width  * direction.offsetX;
-			y += height * direction.offsetY;
-			z += depth  * direction.offsetZ;
-			int dx = x - this.area[0];
-			int dy = y - this.area[1];
-			int dz = z - this.area[2];
-			for (int i = mmArea[0]; i <= mmArea[3]; i++) {
-				for (int j = mmArea[1]; j <= mmArea[4]; j++) {
-					for (int k = mmArea[2]; k <= mmArea[5]; k++) {
-							bd.get(world, i, j, k).set(world, i + dx, j + dy, k + dz);
+		for (int i = mmArea[0]; i <= mmArea[3]; i++) {
+			for (int j = mmArea[1]; j <= mmArea[4]; j++) {
+				for (int k = mmArea[2]; k <= mmArea[5]; k++) {
+					bd.get(world, i, j, k);
+					int a = i;
+					int b = j;
+					int c = k;
+					for (int d = count; d > 0; d--) {
+						a += width  * direction.offsetX;
+						b += height * direction.offsetY;
+						c += depth  * direction.offsetZ;
+						bd.set(world, a, b, c);
 					}
 				}
 			}
 		}
+		
 		return true;
+	}
+	
+	public boolean mirrorX(World world) {
+		if (!this.startSet || !this.endSet) {
+			return false;
+		}
+		
+		BlockData left = new BlockData();
+		BlockData right = new BlockData();
+		
+		left.notifyChange = false;
+		right.notifyChange = false;
+		
+		for (int i = 0; i <= (mmArea[3] - mmArea[0]) >> 1; i++) {
+			int leftPos = mmArea[0] + i;
+			int rightPos = mmArea[3] - i;
+			for (int j = mmArea[1]; j <= mmArea[4]; j++) {
+				for (int k = mmArea[2]; k <= mmArea[5]; k++) {
+					left.get(world, leftPos, j, k);
+					if (leftPos != rightPos) {
+						right.get(world, rightPos, j, k).mirrorX().set(world, leftPos, j, k);
+					}
+					left.mirrorX().set(world, rightPos, j, k);
+				}
+			}
+		}
+		this.notifyBlockChanges(world, mmArea[0], mmArea[1], mmArea[2], mmArea[3], mmArea[4], mmArea[5]);
+		return true;
+	}
+	
+	public boolean mirrorZ(World world) {
+		if (!this.startSet || !this.endSet) {
+			return false;
+		}
+		
+		BlockData top = new BlockData();
+		BlockData bottom = new BlockData();
+		
+		top.notifyChange = false;
+		bottom.notifyChange = false;
+		
+		for (int k = 0; k <= (mmArea[5] - mmArea[2]) >> 1; k++) {
+			int topPos = mmArea[2] + k;
+			int bottomPos = mmArea[5] - k;
+			for (int i = mmArea[0]; i <= mmArea[3]; i++) {
+				for (int j = mmArea[1]; j <= mmArea[4]; j++) {
+					top.get(world, i, j, topPos);
+					if (topPos != bottomPos) {
+						bottom.get(world, i, j, bottomPos).mirrorZ().set(world, i, j, topPos);
+					}
+					top.mirrorZ().set(world, i, j, bottomPos);
+				}
+			}
+		}
+		this.notifyBlockChanges(world, mmArea[0], mmArea[1], mmArea[2], mmArea[3], mmArea[4], mmArea[5]);
+		return true;
+	}
+	
+	public boolean rotate90(World world) {
+		if (!this.startSet || !this.endSet || this.mmArea[3] - this.mmArea[0] != this.mmArea[5] - this.mmArea[2]) {
+			return false;
+		}
+		
+		BlockData topLeft = new BlockData();
+		BlockData other = new BlockData();
+		
+		topLeft.notifyChange = false;
+		other.notifyChange = false;
+		
+		int width  = this.mmArea[3] - this.mmArea[0];
+		
+		for (int i = 0; i <= width >> 1; i++) {
+			int leftPos = i;
+			int rightPos = width - i;
+			for (int k = 0; k <= (width - 1) >> 1; k++) {
+				int topPos = k;
+				int bottomPos = width - k;
+				for (int j = mmArea[1]; j <= mmArea[4]; j++) {
+					topLeft.get(world, this.mmArea[0] + leftPos, j, this.mmArea[2] + topPos); //top-left ...
+					if (leftPos != rightPos || topPos != bottomPos) {
+						other.get(world, this.mmArea[0] + topPos, j, this.mmArea[2] + rightPos).rotate90().set(world, this.mmArea[0] + leftPos, j, this.mmArea[2] + topPos); //bottom-left -> top-left
+						other.get(world, this.mmArea[0] + rightPos, j, this.mmArea[2] + bottomPos).rotate90().set(world, this.mmArea[0] + topPos, j, this.mmArea[2] + rightPos); //bottom-right -> bottom-left
+						other.get(world, this.mmArea[0] + bottomPos, j, this.mmArea[2] + leftPos).rotate90().set(world,this.mmArea[0] +  rightPos, j, this.mmArea[2] + bottomPos); //top-right -> bottom-right
+					}
+					topLeft.rotate90().set(world, this.mmArea[0] + bottomPos, j, this.mmArea[2] + leftPos); //... -> top-right
+				}
+			}
+		}
+		
+		if ((width & 1) == 0) { //middle blocks
+			for (int j = mmArea[1]; j <= mmArea[4]; j++) {
+				other.get(world, this.mmArea[0] + (width >> 1), j, this.mmArea[2] + (width >> 1)).rotate90().set(world, this.mmArea[0] + (width >> 1), j, this.mmArea[2] + (width >> 1));
+			}
+		}
+		this.notifyBlockChanges(world, mmArea[0], mmArea[1], mmArea[2], mmArea[3], mmArea[4], mmArea[5]);
+		return true;
+	}
+	
+	public boolean rotate180(World world) {
+		if (!this.startSet || !this.endSet) {
+			return false;
+		}
+		BlockData left = new BlockData();
+		BlockData right = new BlockData();
+		
+		left.notifyChange = false;
+		right.notifyChange = false;
+		
+		for (int i = 0; i <= (mmArea[3] - mmArea[0]) >> 1; i++) {
+			int leftPos = mmArea[0] + i;
+			int rightPos = mmArea[3] - i;
+			for (int k = 0; k <= mmArea[5] - mmArea[2]; k++) {
+				int topPos = mmArea[2] + k;
+				int bottomPos = mmArea[5] - k;
+				for (int j = mmArea[1]; j <= mmArea[4]; j++) {
+					left.get(world, leftPos, j, topPos);
+					if (leftPos != rightPos || topPos != bottomPos) {
+						right.get(world, rightPos, j, bottomPos).rotate180().set(world, leftPos, j, topPos);
+					}
+					left.rotate180().set(world, rightPos, j, bottomPos);
+				}
+				if (leftPos == rightPos && topPos == bottomPos) {
+					break;
+				}
+			}
+		}
+		this.notifyBlockChanges(world, mmArea[0], mmArea[1], mmArea[2], mmArea[3], mmArea[4], mmArea[5]);
+		return true;
+	}
+	
+	public boolean rotate270(World world) {
+		if (!this.startSet || !this.endSet || this.mmArea[3] - this.mmArea[0] != this.mmArea[5] - this.mmArea[2]) {
+			return false;
+		}
+		
+		BlockData topLeft = new BlockData();
+		BlockData other = new BlockData();
+		
+		topLeft.notifyChange = false;
+		other.notifyChange = false;
+		
+		int width  = this.mmArea[3] - this.mmArea[0];
+		
+		for (int i = 0; i <= width >> 1; i++) {
+			int leftPos = i;
+			int rightPos = width - i;
+			for (int k = 0; k <= (width - 1)>> 1; k++) {
+				int topPos = k;
+				int bottomPos = width - k;
+				for (int j = mmArea[1]; j <= mmArea[4]; j++) {
+					topLeft.get(world, this.mmArea[0] + leftPos, j, this.mmArea[2] + topPos); //top-left ...
+					if (leftPos != rightPos || topPos != bottomPos) {
+						other.get(world, this.mmArea[0] + bottomPos, j, this.mmArea[2] + leftPos).rotate270().set(world, this.mmArea[0] + leftPos, j, this.mmArea[2] + topPos); //top-right -> top-left
+						other.get(world, this.mmArea[0] + rightPos, j, this.mmArea[2] + bottomPos).rotate270().set(world, this.mmArea[0] + bottomPos, j, this.mmArea[2] + leftPos); //bottom-right -> top-right
+						other.get(world, this.mmArea[0] + topPos, j, this.mmArea[2] + rightPos).rotate270().set(world,this.mmArea[0] +  rightPos, j, this.mmArea[2] + bottomPos); //bottom-left -> bottom-right
+					}
+					topLeft.rotate270().set(world, this.mmArea[0] + topPos, j, this.mmArea[2] + rightPos); //... -> bottom-left
+				}
+			}
+		}
+		
+		if ((width & 1) == 0) { //middle blocks
+			for (int j = mmArea[1]; j <= mmArea[4]; j++) {
+				other.get(world, this.mmArea[0] + (width >> 1), j, this.mmArea[2] + (width >> 1)).rotate270().set(world, this.mmArea[0] + (width >> 1), j, this.mmArea[2] + (width >> 1));
+			}
+		}
+		this.notifyBlockChanges(world, mmArea[0], mmArea[1], mmArea[2], mmArea[3], mmArea[4], mmArea[5]);
+		return true;
+	}
+
+	private void notifyBlockChanges(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
+		for (int i = x1; i <= x2; i++) {
+			for (int j = y1; j <= y2; j++) {
+				for (int k = z1; k < z2; k++) {
+					world.notifyBlockChange(i, j, k, world.getBlockId(i, j, k));
+				}
+			}
+		}
 	}
 }

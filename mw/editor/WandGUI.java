@@ -29,7 +29,7 @@ public class WandGUI {
 	private int count = 0;
 	private ForgeDirection direction;
 
-	@ForgeSubscribe(priority = EventPriority.NORMAL)
+	@ForgeSubscribe
 	public void onRenderWorld(RenderWorldLastEvent event) {
 		if (this.mc.thePlayer != null && this.mc.thePlayer.capabilities.isCreativeMode) {
 			ItemStack is = this.mc.thePlayer.inventory.getCurrentItem();
@@ -37,6 +37,10 @@ public class WandGUI {
 				BlockAreaMode bam = ModEditor.instance.bam;
 				int[] area = ModEditor.instance.bam.area;
 				int[] mmArea = ModEditor.instance.bam.mmArea;
+				int mode = bam.mode;
+				if (is.getItemDamage() == Wand.ROTATOR) {
+					mode = -1;
+				}
 				double posX = this.mc.thePlayer.prevPosX + (this.mc.thePlayer.posX - this.mc.thePlayer.prevPosX) * event.partialTicks;
 				double posY = this.mc.thePlayer.prevPosY + (this.mc.thePlayer.posY - this.mc.thePlayer.prevPosY) * event.partialTicks;
 				double posZ = this.mc.thePlayer.prevPosZ + (this.mc.thePlayer.posZ - this.mc.thePlayer.prevPosZ) * event.partialTicks;
@@ -75,7 +79,7 @@ public class WandGUI {
 					}
 				}
 				
-				if (bam.mode == 0 || bam.mode == 1 || bam.mode == 2 || bam.mode == 3 || bam.mode == 5) {
+				if (mode == 0 || mode == 1 || mode == 2 || mode == 3 || mode == 5) {
 					GL11.glDepthFunc(GL11.GL_GREATER);
 					this.renderBox(x1, y1, z1, x1 + 1, y1 + 1, z1 + 1, 255, 255, 255, 63);
 					GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -93,7 +97,7 @@ public class WandGUI {
 						
 						boolean skip = true;
 						
-						if (bam.mode == 7) {
+						if (mode == 7) {
 							ForgeDirection direction = bam.fillAreaDirection(x1, y1, z1);
 							if (direction != null) {
 								skip = false;
@@ -122,7 +126,7 @@ public class WandGUI {
 								z1 = area[2] + depth  * ((direction.offsetZ * (z1 - startZ)) / depth);
 							}
 						}
-						if (bam.mode == 6 || (bam.mode == 7 && !skip)) {
+						if (mode == 6 || (mode == 7 && !skip)) {
 			                int x2 = x1 + area[3] - area[0];
 			                int y2 = y1 + area[4] - area[1];
 			                int z2 = z1 + area[5] - area[2];
@@ -178,27 +182,31 @@ public class WandGUI {
 		}
 	}
 	
-	@ForgeSubscribe(priority = EventPriority.NORMAL)
+	@ForgeSubscribe
 	public void onRenderHUD(RenderGameOverlayEvent event) {
 		if (!event.isCancelable() && event.type == ElementType.EXPERIENCE && this.mc.thePlayer != null && this.mc.thePlayer.capabilities.isCreativeMode) {
 			ItemStack is = this.mc.thePlayer.inventory.getCurrentItem();
 			BlockAreaMode bam = ModEditor.instance.bam;
-			if (is != null && is.itemID == ModEditor.instance.wandId + 256 && bam.mode >= 0) {
-				FontRenderer fr = RenderManager.instance.getFontRenderer();
-				String extra = "";
-				if (bam.mode == 7 && count > 0) {
-					extra = " (" + ((Integer)count).toString() + " " + this.direction.toString() + ")";
+			FontRenderer fr = RenderManager.instance.getFontRenderer();
+			if (is != null && is.itemID == ModEditor.instance.wandId + 256) {
+				if (is.getItemDamage() == Wand.EDITOR && bam.mode >= 0) {
+					String extra = "";
+					if (bam.mode == 7 && count > 0) {
+						extra = " (" + ((Integer)count).toString() + " " + this.direction.toString() + ")";
+					}
+					fr.drawStringWithShadow(I18n.getString("mw.editor.Mode" + ((Integer)bam.mode).toString()) + extra, 2, 2, 0xffffff);
+					String blockName;
+					if (bam.block.blockId == 0) {
+						blockName = I18n.getString("mw.editor.blockAir");
+					} else if (Item.itemsList[bam.block.blockId] != null){
+						blockName = I18n.getString(Item.itemsList[bam.block.blockId].getUnlocalizedName(new ItemStack(bam.block.blockId, 1, bam.block.metadata)) + ".name");
+					} else {
+						blockName = Block.blocksList[bam.block.blockId].getLocalizedName();
+					}
+					fr.drawStringWithShadow(I18n.getString("mw.editor.selectedBlock") + ": " + blockName + " (" + new Integer(bam.block.blockId).toString() + ") - " + new Integer(bam.block.metadata).toString(), 2, 10, 0xffffff);
+				} else if (is.getItemDamage() == Wand.ROTATOR && bam.rmode >= 0 && bam.startSet && bam.endSet) {
+					fr.drawStringWithShadow(I18n.getString("mw.editor.RMode" + ((Integer)bam.rmode).toString()), 2, 2, 0xffffff);
 				}
-				fr.drawStringWithShadow(I18n.getString("mw.editor.Mode" + ((Integer)bam.mode).toString()) + extra, 2, 2, 0xffffff);
-				String blockName;
-				if (bam.block.blockId == 0) {
-					blockName = I18n.getString("mw.editor.blockAir");
-				} else if (Item.itemsList[bam.block.blockId] != null){
-					blockName = I18n.getString(Item.itemsList[bam.block.blockId].getUnlocalizedName(new ItemStack(bam.block.blockId, 1, bam.block.metadata)) + ".name");
-				} else {
-					blockName = Block.blocksList[bam.block.blockId].getLocalizedName();
-				}
-				fr.drawStringWithShadow(I18n.getString("mw.editor.selectedBlock") + ": " + blockName + " (" + new Integer(bam.block.blockId).toString() + ") - " + new Integer(bam.block.metadata).toString(), 2, 10, 0xffffff);
 			}
 		}
 	}

@@ -2,6 +2,9 @@ package mw.editor;
 
 import java.io.IOException;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+
 import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
@@ -19,6 +22,8 @@ public class EditorPacketHandler extends PacketHandler {
 	private static final byte ENDPOSCHANGE = 3;
 	private static final byte RESETAREA = 4;
 	private static final byte SNEAKING = 5;
+	private static final byte ROTATORMODECHANGE = 6;
+	private static final byte WANDFUNCTIONCHANGE = 7;
 	
 	private static EditorPacketHandler instance;
 	
@@ -47,6 +52,12 @@ public class EditorPacketHandler extends PacketHandler {
 			break;
 		case SNEAKING:
 			handleSneaking(in);
+			break;
+		case ROTATORMODECHANGE:
+			handleRotatorModeChange(in);
+			break;
+		case WANDFUNCTIONCHANGE:
+			handleWandFunctionChange(player);
 			break;
 		}
 		return;
@@ -83,6 +94,17 @@ public class EditorPacketHandler extends PacketHandler {
 	
 	private void handleSneaking(ByteArrayDataInput in) {
 		ModEditor.instance.isSneaking = in.readBoolean();
+	}
+	
+	private void handleRotatorModeChange(ByteArrayDataInput in) {
+		int modeId = in.readInt();
+		ModEditor.instance.bam.setRotatorMode(modeId);
+	}
+	
+	private void handleWandFunctionChange(Player player) {
+		if (player instanceof EntityPlayerMP) {
+			SwitchFunction.onFunctionChange((EntityPlayerMP) player);
+		}
 	}
 	
 	public static void sendModeChange(Player player, int mode) {
@@ -148,6 +170,27 @@ public class EditorPacketHandler extends PacketHandler {
 		try {
 			pd.writeByte(SNEAKING);
 			pd.writeBoolean(isSneaking);
+		} catch (IOException e) {
+			return;
+		}
+		EditorPacketHandler.instance.sendPacket(pd);
+	}
+	
+	public static void sendRotatorModeChange(Player player, int mode) {
+		PacketData pd = new PacketData(1 + 4);
+		try {
+			pd.writeByte(ROTATORMODECHANGE);
+			pd.writeInt(mode);
+		} catch (IOException e) {
+			return;
+		}
+		EditorPacketHandler.instance.sendPacket(pd, true, player);
+	}
+
+	public static void sendFunctionChange() {
+		PacketData pd = new PacketData(1);
+		try {
+			pd.writeByte(WANDFUNCTIONCHANGE);
 		} catch (IOException e) {
 			return;
 		}

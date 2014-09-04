@@ -2,10 +2,8 @@ package mw.editor;
 
 import java.io.File;
 
-import org.lwjgl.input.Keyboard;
-
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.command.ServerCommandManager;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
@@ -19,7 +17,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(modid="mw.ModEditor", name="ModEditor", version="1.1.1")
+@Mod(modid="mw.ModEditor", name="ModEditor", version="1.2.1", dependencies = "required-after:MWLibrary")
 @NetworkMod(clientSideRequired=true, serverSideRequired=true, channels = { EditorPacketHandler.CHANNEL }, packetHandler = EditorPacketHandler.class)
 public class ModEditor {
 	
@@ -34,7 +32,7 @@ public class ModEditor {
 	
 	protected int wandId = 4096;
 	protected String wandCmd = "wand";
-	protected Wand wand = new Wand(wandId);
+	protected Wand wand;
 
 	protected boolean isSneaking;
 	
@@ -42,20 +40,23 @@ public class ModEditor {
 	public void preInit(FMLPreInitializationEvent preInitEvent) {
 		Configuration Config = new Configuration(new File("config/EditorWandMod.cfg"));
 		Config.load();
-		this.wandId = Config.get("ItemId", "EditorWand", 4096).getInt();
-		this.wandCmd = Config.get("Command", "EditorWand", "wand").getString();
+		this.wandId = Config.get("ItemId", "EditorWand", this.wandId).getInt();
+		this.wandCmd = Config.get("Command", "EditorWand", this.wandCmd).getString();
 		
-		GameRegistry.registerItem(wand, wand.getUnlocalizedName());
+		this.wand = new Wand(wandId);
+		
+		GameRegistry.registerItem(this.wand, this.wand.getUnlocalizedName());
 		if (preInitEvent.getSide().isServer()) {
-			GameRegistry.registerPlayerTracker(pt);
+			GameRegistry.registerPlayerTracker(this.pt);
 		} else {
 			KeyBindingRegistry.registerKeyBinding(new NoFallKey());
+			KeyBindingRegistry.registerKeyBinding(new SwitchFunction());
 		}
 	}
 	
 	@EventHandler
-	public void postInit(FMLPostInitializationEvent preInitEvent) {
-		if (preInitEvent.getSide().isClient()) {
+	public void postInit(FMLPostInitializationEvent postInitEvent) {
+		if (postInitEvent.getSide().isClient()) {
 			MinecraftForge.EVENT_BUS.register(new WandGUI()); 
 		}
 	}
@@ -64,5 +65,9 @@ public class ModEditor {
 	public void serverStart(FMLServerStartingEvent event) {
 		Commands dc = new Commands();
 		((ServerCommandManager) event.getServer().getCommandManager()).registerCommand(dc);
+	}
+	
+	public static String getModId() {
+		return "editorwand";
 	}
 }
