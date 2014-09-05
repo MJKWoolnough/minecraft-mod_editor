@@ -463,6 +463,9 @@ public class BlockAreaMode {
 			for (int k = 0; k <= mmArea[5] - mmArea[2]; k++) {
 				int topPos = mmArea[2] + k;
 				int bottomPos = mmArea[5] - k;
+				if (leftPos == rightPos && topPos > bottomPos) {
+					break;
+				}
 				for (int j = mmArea[1]; j <= mmArea[4]; j++) {
 					left.get(world, leftPos, j, topPos);
 					if (leftPos != rightPos || topPos != bottomPos) {
@@ -470,9 +473,7 @@ public class BlockAreaMode {
 					}
 					left.rotate180().set(world, rightPos, j, bottomPos);
 				}
-				if (leftPos == rightPos && topPos == bottomPos) {
-					break;
-				}
+				
 			}
 		}
 		this.notifyBlockChanges(world, mmArea[0], mmArea[1], mmArea[2], mmArea[3], mmArea[4], mmArea[5]);
