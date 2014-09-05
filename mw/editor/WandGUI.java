@@ -192,7 +192,9 @@ public class WandGUI {
 				if (is.getItemDamage() == Wand.EDITOR && bam.mode >= 0) {
 					String extra = "";
 					if (bam.mode == 7 && count > 0) {
-						extra = " (" + ((Integer)count).toString() + " " + this.direction.toString() + ")";
+						extra = " (" + Integer.toString(this.count) + " " + this.direction.toString() + ")";
+					} else if ((bam.mode == 2 || bam.mode == 3) && bam.startSet && bam.endSet) {
+						extra = " (" + Integer.toString(bam.mmArea[3] - bam.mmArea[0] + 1) + " x " + Integer.toString(bam.mmArea[4] - bam.mmArea[1] + 1) + " x " + Integer.toString(bam.mmArea[5] - bam.mmArea[2] + 1) + ")";
 					}
 					fr.drawStringWithShadow(I18n.getString("mw.editor.Mode" + ((Integer)bam.mode).toString()) + extra, 2, 2, 0xffffff);
 					String blockName;
@@ -205,7 +207,7 @@ public class WandGUI {
 					}
 					fr.drawStringWithShadow(I18n.getString("mw.editor.selectedBlock") + ": " + blockName + " (" + new Integer(bam.block.blockId).toString() + ") - " + new Integer(bam.block.metadata).toString(), 2, 10, 0xffffff);
 				} else if (is.getItemDamage() == Wand.ROTATOR && bam.rmode >= 0 && bam.startSet && bam.endSet) {
-					fr.drawStringWithShadow(I18n.getString("mw.editor.RMode" + ((Integer)bam.rmode).toString()), 2, 2, 0xffffff);
+					fr.drawStringWithShadow(I18n.getString("mw.editor.RMode" + Integer.toString(bam.rmode)), 2, 2, 0xffffff);
 				}
 			}
 		}
