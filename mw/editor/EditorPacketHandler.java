@@ -33,7 +33,7 @@ public class EditorPacketHandler extends PacketHandler {
 	}
 
 	@Override
-	public void handlePacket(int packetId, ByteArrayDataInput in, Player player) {
+	public void handlePacket(byte packetId, ByteArrayDataInput in, Player player) {
 		switch (packetId) {
 		case MODECHANGE:
 			handleModeChange(in);
