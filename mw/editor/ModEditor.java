@@ -17,7 +17,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(modid="editorwand", name="ModEditor", version="2.0.0", dependencies = "required-after:MWLibrary")
+@Mod(modid="editorwand", name="ModEditor", version="2.0.1", dependencies = "required-after:MWLibrary")
 @NetworkMod(clientSideRequired=true, serverSideRequired=true, channels = { EditorPacketHandler.CHANNEL }, packetHandler = EditorPacketHandler.class)
 public class ModEditor {
 	

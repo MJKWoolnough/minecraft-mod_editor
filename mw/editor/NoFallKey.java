@@ -29,7 +29,7 @@ public class NoFallKey extends KeyHandler {
 		if (!player.capabilities.isCreativeMode) {
 			return;
 		}
-		if (player.inventory.mainInventory[player.inventory.currentItem].itemID == ModEditor.instance.wand.itemID) {
+		if (player.inventory.mainInventory[player.inventory.currentItem] != null && player.inventory.mainInventory[player.inventory.currentItem].itemID == ModEditor.instance.wand.itemID) {
 			player.movementInput.sneak = false;
 			kb.pressed = false;
 		}
