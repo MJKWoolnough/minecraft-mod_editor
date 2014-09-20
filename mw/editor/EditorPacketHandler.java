@@ -2,6 +2,7 @@ package mw.editor;
 
 import java.io.IOException;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
@@ -24,6 +25,7 @@ public class EditorPacketHandler extends PacketHandler {
 	private static final byte SNEAKING = 5;
 	private static final byte ROTATORMODECHANGE = 6;
 	private static final byte WANDFUNCTIONCHANGE = 7;
+	private static final byte USEWAND = 8;
 	
 	private static EditorPacketHandler instance;
 	
@@ -58,6 +60,9 @@ public class EditorPacketHandler extends PacketHandler {
 			break;
 		case WANDFUNCTIONCHANGE:
 			handleWandFunctionChange(player);
+			break;
+		case USEWAND:
+			handleUseWand(player, in);
 			break;
 		}
 		return;
@@ -104,6 +109,15 @@ public class EditorPacketHandler extends PacketHandler {
 	private void handleWandFunctionChange(Player player) {
 		if (player instanceof EntityPlayerMP) {
 			SwitchFunction.onFunctionChange((EntityPlayerMP) player);
+		}
+	}
+	
+	private void handleUseWand(Player player, ByteArrayDataInput in) {
+		if (player instanceof EntityPlayer) {
+			int x = in.readInt();
+			int y = in.readInt();
+			int z = in.readInt();
+			Wand.useWand((EntityPlayer) player, x, y, z);
 		}
 	}
 	
@@ -191,6 +205,19 @@ public class EditorPacketHandler extends PacketHandler {
 		PacketData pd = new PacketData(1);
 		try {
 			pd.writeByte(WANDFUNCTIONCHANGE);
+		} catch (IOException e) {
+			return;
+		}
+		EditorPacketHandler.instance.sendPacket(pd);
+	}
+	
+	public static void sendUseWand(int x, int y, int z) {
+		PacketData pd = new PacketData(1 + 4 + 4 + 4);
+		try {
+			pd.writeByte(USEWAND);
+			pd.writeInt(x);
+			pd.writeInt(y);
+			pd.writeInt(z);
 		} catch (IOException e) {
 			return;
 		}

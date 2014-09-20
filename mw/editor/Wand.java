@@ -26,44 +26,75 @@ public class Wand extends Item {
 		.setTextureName(ModEditor.getModId() + ":wand");
 	}
 	
+	protected static void useWand(EntityPlayer player, int x, int y, int z) {
+		if (!player.worldObj.isRemote) {
+			ItemStack stack = player.inventory.getCurrentItem();
+			if (player.capabilities.isCreativeMode) {
+				switch (stack.getItemDamage()) {
+				case EDITOR:
+					editor(player.worldObj, player, x, y, z);
+					break;
+				case ROTATOR:
+					rotator(player.worldObj, player);
+					break;
+				default:
+					stack.setItemDamage(EDITOR);
+				}
+			} else {
+				stack.stackSize = 0;
+			}
+		}
+	}
+	
+	@Override
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		if (world.isRemote) {
+			EditorPacketHandler.sendUseWand(x, y, z);
+		}
+		return true;
+	}
+	
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-		if (!world.isRemote && player.capabilities.isCreativeMode) {
-			switch (stack.getItemDamage()) {
-			case EDITOR:
-				this.editor(world, player);
-				break;
-			case ROTATOR:
-				this.rotator(world, player);
-				break;
-			default:
-				stack.setItemDamage(EDITOR);
+		if (!world.isRemote) {
+			if (player.capabilities.isCreativeMode) {
+				switch (stack.getItemDamage()) {
+				case EDITOR:
+					MovingObjectPosition mop = this.getMovingObjectPositionFromPlayer(world, player, true);
+					int x;
+					int y;
+					int z;
+					
+					if (mop == null) {
+						x = (int) Math.floor(player.posX);
+				        y = (int) Math.floor(player.posY + (world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight()));
+				        z = (int) Math.floor(player.posZ);
+				        if (y > 255) {
+							y = 255;
+						} else if (y < 0) {
+							y = 0;
+						}
+					} else {
+						x = mop.blockX;
+						y = mop.blockY;
+						z = mop.blockZ;
+					}
+					this.editor(world, player, x, y, z);
+					break;
+				case ROTATOR:
+					this.rotator(world, player);
+					break;
+				default:
+					stack.setItemDamage(EDITOR);
+				}
+			} else {
+				stack.stackSize = 0;
 			}
 		}
 		return stack;
 	}
 	
-	public void editor(World world, EntityPlayer player) {
+	private static void editor(World world, EntityPlayer player, int x, int y, int z) {
 		if (ModEditor.instance.isSneaking) {
-			MovingObjectPosition mop = this.getMovingObjectPositionFromPlayer(world, player, true);
-			int x;
-			int y;
-			int z;
-			
-			if (mop == null) {
-				x = (int) Math.floor(player.posX);
-		        y = (int) Math.floor(player.posY + (world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight()));
-		        z = (int) Math.floor(player.posZ);
-		        if (y > 255) {
-					y = 255;
-				} else if (y < 0) {
-					y = 0;
-				}
-			} else {
-				x = mop.blockX;
-				y = mop.blockY;
-				z = mop.blockZ;
-			}
-			
 			BlockAreaMode bam = ModEditor.instance.pt.getPlayerData(player);
 			switch(bam.getMode()) {
 			case 0:
@@ -107,7 +138,7 @@ public class Wand extends Item {
 		}
 	}
 	
-	private void rotator(World world, EntityPlayer player) {
+	private static void rotator(World world, EntityPlayer player) {
 		if (ModEditor.instance.isSneaking) {
 			BlockAreaMode bam = ModEditor.instance.pt.getPlayerData(player);
 			switch(bam.getRotatorMode()) {
