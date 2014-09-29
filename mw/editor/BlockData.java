@@ -1,6 +1,7 @@
 package mw.editor;
 
-import java.io.DataOutputStream;
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 
 import mw.library.Blocks;
@@ -16,8 +17,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ForgeDirection;
 import codechicken.multipart.MultipartHelper;
 
-import com.google.common.io.ByteArrayDataInput;
-
 public class BlockData extends Blocks {
 	
 	@Override
@@ -25,7 +24,7 @@ public class BlockData extends Blocks {
 		return (BlockData) super.get(world, x, y,  z);
 	}
 	
-	public void write(DataOutputStream os) throws IOException {
+	public void write(DataOutput os) throws IOException {
 		os.writeInt(this.blockId);
 		os.writeByte(this.metadata);
 		if (this.nbtData != null) {
@@ -33,7 +32,7 @@ public class BlockData extends Blocks {
 		}
 	}
 
-	public BlockData load(ByteArrayDataInput in) throws IOException {
+	public BlockData load(DataInput in) throws IOException {
 		this.blockId = in.readInt();
 		this.metadata = in.readByte();
 		if (this.blockId > 0 && Block.blocksList[this.blockId].hasTileEntity(this.metadata)) {
@@ -41,5 +40,4 @@ public class BlockData extends Blocks {
 		}
 		return this;
 	}
-
 }
