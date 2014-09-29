@@ -36,7 +36,7 @@ public class ModEditor {
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent preInitEvent) {
-		Configuration Config = new Configuration(new File("config/EditorWandMod.cfg"));
+		Configuration Config = new Configuration(preInitEvent.getSuggestedConfigurationFile());
 		Config.load();
 		this.wandId = Config.get("ItemId", "EditorWand", this.wandId).getInt();
 		this.wandCmd = Config.get("Command", "EditorWand", this.wandCmd).getString();
