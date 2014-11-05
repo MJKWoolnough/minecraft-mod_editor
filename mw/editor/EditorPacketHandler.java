@@ -74,9 +74,7 @@ public class EditorPacketHandler extends PacketHandler {
 	}
 	
 	private void handleBlockChange(ByteArrayDataInput in) {
-		try {
-			ModEditor.instance.bam.setBlockData(new BlockData().load(in));
-		} catch (IOException e) {}
+		ModEditor.instance.bam.setBlockData(in);
 	}
 	
 	private void handleStartPosChange(ByteArrayDataInput in) {

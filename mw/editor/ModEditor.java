@@ -16,15 +16,17 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid="editorwand", name="ModEditor", version="2.0.2", dependencies = "required-after:MWLibrary")
+@Mod(modid="editorwand", name="ModEditor", version="2.0.3", dependencies = "required-after:MWLibrary")
 @NetworkMod(clientSideRequired=true, serverSideRequired=true, channels = { EditorPacketHandler.CHANNEL }, packetHandler = EditorPacketHandler.class)
 public class ModEditor {
 	
 	@Instance(value = "editorwand")
 	public static ModEditor instance;
 	
-	protected BlockAreaMode bam = new BlockAreaMode();
+	protected BlockAreaModeClient bam = new BlockAreaModeClient();
 	
 	protected PlayerTracker pt = new PlayerTracker();
 	

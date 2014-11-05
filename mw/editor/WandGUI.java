@@ -34,9 +34,9 @@ public class WandGUI {
 		if (this.mc.thePlayer != null && this.mc.thePlayer.capabilities.isCreativeMode) {
 			ItemStack is = this.mc.thePlayer.inventory.getCurrentItem();
 			if (is != null && is.itemID == ModEditor.instance.wandId + 256) {
-				BlockAreaMode bam = ModEditor.instance.bam;
-				int[] area = ModEditor.instance.bam.area;
-				int[] mmArea = ModEditor.instance.bam.mmArea;
+				BlockAreaModeClient bam = ModEditor.instance.bam;
+				int[] area = ModEditor.instance.bam.coords;
+				int[] mmArea = ModEditor.instance.bam.area.getCoords();
 				int mode = bam.mode;
 				if (is.getItemDamage() == Wand.ROTATOR) {
 					mode = -1;
@@ -186,7 +186,7 @@ public class WandGUI {
 	public void onRenderHUD(RenderGameOverlayEvent event) {
 		if (!event.isCancelable() && event.type == ElementType.EXPERIENCE && this.mc.thePlayer != null && this.mc.thePlayer.capabilities.isCreativeMode) {
 			ItemStack is = this.mc.thePlayer.inventory.getCurrentItem();
-			BlockAreaMode bam = ModEditor.instance.bam;
+			BlockAreaModeClient bam = ModEditor.instance.bam;
 			FontRenderer fr = RenderManager.instance.getFontRenderer();
 			if (is != null && is.itemID == ModEditor.instance.wandId + 256) {
 				if (is.getItemDamage() == Wand.EDITOR && bam.mode >= 0) {
@@ -194,7 +194,7 @@ public class WandGUI {
 					if (bam.mode == 7 && count > 0) {
 						extra = " (" + Integer.toString(this.count) + " " + this.direction.toString() + ")";
 					} else if ((bam.mode == 2 || bam.mode == 3) && bam.startSet && bam.endSet) {
-						extra = " (" + Integer.toString(bam.mmArea[3] - bam.mmArea[0] + 1) + " x " + Integer.toString(bam.mmArea[4] - bam.mmArea[1] + 1) + " x " + Integer.toString(bam.mmArea[5] - bam.mmArea[2] + 1) + ")";
+						extra = " (" + Integer.toString(bam.area.width()) + " x " + Integer.toString(bam.area.height()) + " x " + Integer.toString(bam.area.depth()) + ")";
 					}
 					fr.drawStringWithShadow(I18n.getString("mw.editor.Mode" + ((Integer)bam.mode).toString()) + extra, 2, 2, 0xffffff);
 					String blockName;

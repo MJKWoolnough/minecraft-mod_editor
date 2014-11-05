@@ -35,7 +35,7 @@ public class Wand extends Item {
 					editor(player.worldObj, player, x, y, z);
 					break;
 				case ROTATOR:
-					rotator(player.worldObj, player);
+					rotator(player);
 					break;
 				default:
 					stack.setItemDamage(EDITOR);
@@ -81,7 +81,7 @@ public class Wand extends Item {
 					this.editor(world, player, x, y, z);
 					break;
 				case ROTATOR:
-					this.rotator(world, player);
+					this.rotator(player);
 					break;
 				default:
 					stack.setItemDamage(EDITOR);
@@ -108,17 +108,17 @@ public class Wand extends Item {
 				break;
 			case 2:
 				//Select Area Start
-				bam.addStartPos(x, y, z);
+				bam.addStartPos(world, x, y, z);
 				EditorPacketHandler.sendStartPosChange((Player) player, x, y, z);
 				break;
 			case 3:
 				//Select Area End
-				bam.addEndPos(x, y, z);
+				bam.addEndPos(world, x, y, z);
 				EditorPacketHandler.sendEndPosChange((Player) player, x, y, z);
 				break;
 			case 4:
 				//Fill Area with Selected Block
-				bam.fillArea(world);
+				bam.fillArea();
 				break;
 			case 5:
 				//Replaced Matching Blocks in Area with Selected Block
@@ -138,29 +138,29 @@ public class Wand extends Item {
 		}
 	}
 	
-	private static void rotator(World world, EntityPlayer player) {
+	private static void rotator(EntityPlayer player) {
 		if (ModEditor.instance.isSneaking) {
 			BlockAreaMode bam = ModEditor.instance.pt.getPlayerData(player);
 			switch(bam.getRotatorMode()) {
 			case 0:
 				//Mirror X
-				bam.mirrorX(world);
+				bam.mirrorX();
 				break;
 			case 1:
 				//Mirror Z
-				bam.mirrorZ(world);
+				bam.mirrorZ();
 				break;
 			case 2:
 				//Rotate 180
-				bam.rotate180(world);
+				bam.rotate180();
 				break;
 			case 3:
 				//Rotate 90
-				bam.rotate90(world);
+				bam.rotate90();
 				break;
 			case 4:
 				//Rotate 270
-				bam.rotate270(world);
+				bam.rotate270();
 				break;
 			}
 		} else {

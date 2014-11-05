@@ -24,20 +24,24 @@ public class BlockData extends Blocks {
 		return (BlockData) super.get(world, x, y,  z);
 	}
 	
-	public void write(DataOutput os) throws IOException {
-		os.writeInt(this.blockId);
-		os.writeByte(this.metadata);
-		if (this.nbtData != null) {
-			NBTBase.writeNamedTag(this.nbtData, os);
-		}
+	public void write(DataOutput os) {
+		try {
+			os.writeInt(this.blockId);
+			os.writeByte(this.metadata);
+			if (this.nbtData != null) {
+				NBTBase.writeNamedTag(this.nbtData, os);
+			}
+		} catch(IOException e) {}
 	}
 
-	public BlockData load(DataInput in) throws IOException {
-		this.blockId = in.readInt();
-		this.metadata = in.readByte();
-		if (this.blockId > 0 && Block.blocksList[this.blockId].hasTileEntity(this.metadata)) {
-			this.nbtData = (NBTTagCompound) NBTBase.readNamedTag(in);
-		}
+	public BlockData load(DataInput in) {
+		try {
+			this.blockId = in.readInt();
+			this.metadata = in.readByte();
+			if (this.blockId > 0 && Block.blocksList[this.blockId].hasTileEntity(this.metadata)) {
+				this.nbtData = (NBTTagCompound) NBTBase.readNamedTag(in);
+			}
+		} catch (IOException e) {}
 		return this;
 	}
 }
