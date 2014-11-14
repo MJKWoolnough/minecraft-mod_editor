@@ -26,7 +26,7 @@ public class NoFallKey extends KeyHandler {
 	@Override
 	public void keyDown(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat) {
 		EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
-		if (!player.capabilities.isCreativeMode) {
+		if (player == null || !player.capabilities.isCreativeMode) {
 			return;
 		}
 		if (player.inventory.mainInventory[player.inventory.currentItem] != null && player.inventory.mainInventory[player.inventory.currentItem].itemID == ModEditor.instance.wand.itemID) {
