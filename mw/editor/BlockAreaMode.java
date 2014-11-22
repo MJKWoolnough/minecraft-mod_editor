@@ -6,19 +6,19 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 public class BlockAreaMode {
-	
-	protected BlockData block = new BlockData();
-	protected Area area;
-	protected World world;
-	
-	protected boolean startSet = false;
-	protected boolean endSet = false;
-	
-	protected final int[] coords = new int[6];
-	
-	protected int mode = -1;
-	protected int rmode = -1;
-	
+
+	protected BlockData	block		= new BlockData();
+	protected Area		area;
+	protected World		world;
+
+	protected boolean	startSet	= false;
+	protected boolean	endSet		= false;
+
+	protected final int[]	coords		= new int[6];
+
+	protected int		mode		= -1;
+	protected int		rmode		= -1;
+
 	public int changeMode() {
 		this.mode++;
 		if (this.mode > 7 || ((!this.startSet || !this.endSet) && this.mode > 3)) {
@@ -26,7 +26,7 @@ public class BlockAreaMode {
 		}
 		return this.mode;
 	}
-	
+
 	public int changeRotatorMode() {
 		if (this.startSet && this.endSet) {
 			this.rmode++;
@@ -36,27 +36,27 @@ public class BlockAreaMode {
 		}
 		return this.rmode;
 	}
-	
+
 	public void setMode(int modeId) {
 		this.mode = modeId;
 	}
-	
+
 	public void setRotatorMode(int modeId) {
 		this.rmode = modeId;
 	}
-	
+
 	public int getMode() {
 		return this.mode;
 	}
-	
+
 	public int getRotatorMode() {
 		return this.rmode;
 	}
-	
+
 	public void getBlock(World world, int x, int y, int z) {
 		this.block = new BlockData().get(world, x, y, z);
 	}
-	
+
 	public boolean setBlock(World world, int x, int y, int z) {
 		if (this.block != null) {
 			this.block.set(world, x, y, z);
@@ -64,7 +64,7 @@ public class BlockAreaMode {
 		}
 		return false;
 	}
-	
+
 	public void addStartPos(World world, int x, int y, int z) {
 		this.resetWorld(world);
 		this.coords[0] = x;
@@ -78,7 +78,7 @@ public class BlockAreaMode {
 			}
 		}
 	}
-	
+
 	public void addEndPos(World world, int x, int y, int z) {
 		this.resetWorld(world);
 		this.coords[3] = x;
@@ -92,7 +92,7 @@ public class BlockAreaMode {
 			}
 		}
 	}
-	
+
 	private void resetWorld(World world) {
 		if (this.world != world) {
 			this.area = null;
@@ -105,7 +105,7 @@ public class BlockAreaMode {
 			this.world = world;
 		}
 	}
-	
+
 	private void setArea(World world) {
 		if (this.area == null) {
 			this.area = new Area(world, this.coords[0], this.coords[1], this.coords[2], this.coords[3], this.coords[4], this.coords[5]);
@@ -113,12 +113,12 @@ public class BlockAreaMode {
 			this.area.setCoords(world, this.coords[0], this.coords[1], this.coords[2], this.coords[3], this.coords[4], this.coords[5]);
 		}
 	}
-	
+
 	public void resetArea() {
 		this.startSet = false;
 		this.endSet = false;
 	}
-	
+
 	public ForgeDirection fillAreaDirection(int x, int y, int z) {
 		int[] coords = this.area.getCoords();
 		if (x >= coords[0] && x <= coords[3] && y >= coords[1] && y <= coords[4]) {
@@ -154,7 +154,7 @@ public class BlockAreaMode {
 			this.area.replace(new Blocks().get(world, x, y, z), this.block);
 		}
 	}
-	
+
 	public void copyArea(World world, int x, int y, int z) {
 		if (this.startSet && this.endSet) {
 			this.area.copyTo(new Area(world, x, y, z, x + this.coords[3] - this.coords[0], y + this.coords[4] - this.coords[1], z + this.coords[5] - this.coords[2]));
@@ -182,7 +182,7 @@ public class BlockAreaMode {
 			this.area.mirrorX();
 		}
 	}
-	
+
 	public void mirrorZ() {
 		if (this.startSet && this.endSet) {
 			this.area.mirrorZ();
@@ -194,13 +194,13 @@ public class BlockAreaMode {
 			this.area.rotate90();
 		}
 	}
-	
+
 	public void rotate180() {
 		if (this.startSet && this.endSet) {
 			this.area.rotate180();
 		}
 	}
-	
+
 	public void rotate270() {
 		if (this.startSet && this.endSet) {
 			this.area.rotate270();

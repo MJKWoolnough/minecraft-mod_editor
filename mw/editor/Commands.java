@@ -40,10 +40,10 @@ public class Commands implements ICommand {
 	@Override
 	public boolean canCommandSenderUseCommand(ICommandSender var1) {
 		if (var1 instanceof EntityPlayer) {
-    			EntityPlayer player = (EntityPlayer) var1;
-    			return player.capabilities.isCreativeMode;
-    		}
-    		return false;
+			EntityPlayer player = (EntityPlayer) var1;
+			return player.capabilities.isCreativeMode;
+		}
+		return false;
 	}
 
 	@Override

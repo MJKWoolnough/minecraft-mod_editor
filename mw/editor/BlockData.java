@@ -11,12 +11,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public class BlockData extends Blocks {
-	
+
 	@Override
 	public BlockData get(World world, int x, int y, int z) {
-		return (BlockData) super.get(world, x, y,  z);
+		return (BlockData) super.get(world, x, y, z);
 	}
-	
+
 	public void write(DataOutput os) {
 		try {
 			os.writeInt(this.blockId);
@@ -24,7 +24,7 @@ public class BlockData extends Blocks {
 			if (this.nbtData != null) {
 				NBTBase.writeNamedTag(this.nbtData, os);
 			}
-		} catch(IOException e) {}
+		} catch (IOException e) {}
 	}
 
 	public BlockData load(DataInput in) {

@@ -11,22 +11,21 @@ import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
 
-
 public class EditorPacketHandler extends PacketHandler {
 
-	public static final String CHANNEL = "editormod";
-	private static final byte MODECHANGE = 0;
-	private static final byte BLOCKCHANGE = 1;
-	private static final byte STARTPOSCHANGE = 2;
-	private static final byte ENDPOSCHANGE = 3;
-	private static final byte RESETAREA = 4;
-	private static final byte SNEAKING = 5;
-	private static final byte ROTATORMODECHANGE = 6;
-	private static final byte WANDFUNCTIONCHANGE = 7;
-	private static final byte USEWAND = 8;
-	
-	private static EditorPacketHandler instance;
-	
+	public static final String		CHANNEL			= "editormod";
+	private static final byte		MODECHANGE		= 0;
+	private static final byte		BLOCKCHANGE		= 1;
+	private static final byte		STARTPOSCHANGE		= 2;
+	private static final byte		ENDPOSCHANGE		= 3;
+	private static final byte		RESETAREA		= 4;
+	private static final byte		SNEAKING		= 5;
+	private static final byte		ROTATORMODECHANGE	= 6;
+	private static final byte		WANDFUNCTIONCHANGE	= 7;
+	private static final byte		USEWAND			= 8;
+
+	private static EditorPacketHandler	instance;
+
 	public EditorPacketHandler() {
 		super(CHANNEL);
 		this.instance = this;
@@ -65,49 +64,49 @@ public class EditorPacketHandler extends PacketHandler {
 		}
 		return;
 	}
-	
+
 	private void handleModeChange(ByteArrayDataInput in) {
 		int modeId = in.readInt();
 		ModEditor.instance.bam.setMode(modeId);
 	}
-	
+
 	private void handleBlockChange(ByteArrayDataInput in) {
 		ModEditor.instance.bam.setBlockData(in);
 	}
-	
+
 	private void handleStartPosChange(ByteArrayDataInput in) {
 		int x = in.readInt();
 		int y = in.readInt();
 		int z = in.readInt();
 		ModEditor.instance.bam.addStartPos(x, y, z);
 	}
-	
+
 	private void handleEndPosChange(ByteArrayDataInput in) {
 		int x = in.readInt();
 		int y = in.readInt();
 		int z = in.readInt();
 		ModEditor.instance.bam.addEndPos(x, y, z);
 	}
-	
+
 	private void handleResetArea() {
 		ModEditor.instance.bam.resetArea();
 	}
-	
+
 	private void handleSneaking(ByteArrayDataInput in) {
 		ModEditor.instance.isSneaking = in.readBoolean();
 	}
-	
+
 	private void handleRotatorModeChange(ByteArrayDataInput in) {
 		int modeId = in.readInt();
 		ModEditor.instance.bam.setRotatorMode(modeId);
 	}
-	
+
 	private void handleWandFunctionChange(Player player) {
 		if (player instanceof EntityPlayerMP) {
 			SwitchFunction.onFunctionChange((EntityPlayerMP) player);
 		}
 	}
-	
+
 	private void handleUseWand(Player player, ByteArrayDataInput in) {
 		if (player instanceof EntityPlayer) {
 			int x = in.readInt();
@@ -116,7 +115,7 @@ public class EditorPacketHandler extends PacketHandler {
 			Wand.useWand((EntityPlayer) player, x, y, z);
 		}
 	}
-	
+
 	public static void sendModeChange(Player player, int mode) {
 		PacketData pd = new PacketData(1 + 4);
 		try {
@@ -127,7 +126,7 @@ public class EditorPacketHandler extends PacketHandler {
 		}
 		EditorPacketHandler.instance.sendPacket(pd, true, player);
 	}
-	
+
 	public static void sendBlockChange(Player player, BlockData bd) {
 		PacketData pd = new PacketData(1 + 4 + 1); // + ???
 		try {
@@ -138,7 +137,7 @@ public class EditorPacketHandler extends PacketHandler {
 		}
 		EditorPacketHandler.instance.sendPacket(pd, true, player);
 	}
-	
+
 	public static void sendStartPosChange(Player player, int x, int y, int z) {
 		PacketData pd = new PacketData(1 + 4 + 4 + 4);
 		try {
@@ -151,7 +150,7 @@ public class EditorPacketHandler extends PacketHandler {
 		}
 		EditorPacketHandler.instance.sendPacket(pd, true, player);
 	}
-	
+
 	public static void sendEndPosChange(Player player, int x, int y, int z) {
 		PacketData pd = new PacketData(1 + 4 + 4 + 4);
 		try {
@@ -164,7 +163,7 @@ public class EditorPacketHandler extends PacketHandler {
 		}
 		EditorPacketHandler.instance.sendPacket(pd, true, player);
 	}
-	
+
 	public static void sendResetArea(Player player, int x, int y, int z) {
 		PacketData pd = new PacketData(1);
 		try {
@@ -174,7 +173,7 @@ public class EditorPacketHandler extends PacketHandler {
 		}
 		EditorPacketHandler.instance.sendPacket(pd, true, player);
 	}
-	
+
 	public static void sendSneaking(boolean isSneaking) {
 		PacketData pd = new PacketData(1 + 1);
 		try {
@@ -185,7 +184,7 @@ public class EditorPacketHandler extends PacketHandler {
 		}
 		EditorPacketHandler.instance.sendPacket(pd);
 	}
-	
+
 	public static void sendRotatorModeChange(Player player, int mode) {
 		PacketData pd = new PacketData(1 + 4);
 		try {
@@ -206,7 +205,7 @@ public class EditorPacketHandler extends PacketHandler {
 		}
 		EditorPacketHandler.instance.sendPacket(pd);
 	}
-	
+
 	public static void sendUseWand(int x, int y, int z) {
 		PacketData pd = new PacketData(1 + 4 + 4 + 4);
 		try {

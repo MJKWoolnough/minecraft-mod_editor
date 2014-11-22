@@ -6,25 +6,26 @@ import net.minecraftforge.common.ForgeDirection;
 import com.google.common.io.ByteArrayDataInput;
 
 public class BlockAreaModeClient {
-	protected BlockData block = new BlockData();
-	protected Area area = new Area(null, 0, 0, 0, 0, 0, 0);
-	
-	protected boolean startSet = false;
-	protected boolean endSet = false;
-	
-	protected final int[] coords = new int[6];
-	
-	protected int mode = -1;
-	protected int rmode = -1;
-	
+
+	protected BlockData	block		= new BlockData();
+	protected Area		area		= new Area(null, 0, 0, 0, 0, 0, 0);
+
+	protected boolean	startSet	= false;
+	protected boolean	endSet		= false;
+
+	protected final int[]	coords		= new int[6];
+
+	protected int		mode		= -1;
+	protected int		rmode		= -1;
+
 	public void setMode(int mode) {
 		this.mode = mode;
 	}
-	
+
 	public void setRotatorMode(int mode) {
 		this.rmode = mode;
 	}
-	
+
 	public void addStartPos(int x, int y, int z) {
 		this.coords[0] = x;
 		this.coords[1] = y;
@@ -34,6 +35,7 @@ public class BlockAreaModeClient {
 			this.area.setCoords(null, x, y, z, this.coords[3], this.coords[4], this.coords[5]);
 		}
 	}
+
 	public void addEndPos(int x, int y, int z) {
 		this.coords[3] = x;
 		this.coords[4] = y;
@@ -43,13 +45,12 @@ public class BlockAreaModeClient {
 			this.area.setCoords(null, this.coords[0], this.coords[1], this.coords[2], x, y, z);
 		}
 	}
-	
+
 	public void resetArea() {
 		this.startSet = false;
 		this.endSet = false;
 	}
-	
-	
+
 	public void setBlockData(ByteArrayDataInput in) {
 		this.block.load(in);
 	}

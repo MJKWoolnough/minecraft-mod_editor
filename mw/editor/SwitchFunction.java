@@ -13,9 +13,11 @@ import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
 
 public class SwitchFunction extends KeyHandler {
-	
+
 	public SwitchFunction() {
-		super(new KeyBinding[] { new KeyBinding("Wand Function Switch", Keyboard.KEY_R) }, new boolean[] { false });
+		super(
+				new KeyBinding[] { new KeyBinding("Wand Function Switch", Keyboard.KEY_R) },
+				new boolean[] { false });
 	}
 
 	@Override
@@ -29,7 +31,7 @@ public class SwitchFunction extends KeyHandler {
 			EditorPacketHandler.sendFunctionChange();
 		}
 	}
-	
+
 	protected static void onFunctionChange(EntityPlayerMP player) {
 		ItemStack is = player.inventory.getCurrentItem();
 		if (is.itemID == ModEditor.instance.wandId + 256) {
@@ -45,7 +47,8 @@ public class SwitchFunction extends KeyHandler {
 	}
 
 	@Override
-	public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd) {}
+	public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd) {
+	}
 
 	@Override
 	public EnumSet<TickType> ticks() {

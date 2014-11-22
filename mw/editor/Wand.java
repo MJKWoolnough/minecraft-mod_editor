@@ -10,19 +10,17 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.Player;
 
 public class Wand extends Item {
-	
-	protected static final int EDITOR = 0;
-	protected static final int ROTATOR = 1;
-	
-	private Icon rotatorIcon;
-	
+
+	protected static final int	EDITOR	= 0;
+	protected static final int	ROTATOR	= 1;
+
+	private Icon			rotatorIcon;
+
 	public Wand(int id) {
 		super(id);
-		this.setMaxStackSize(1)
-		.setUnlocalizedName("EditorWand")
-		.setTextureName(ModEditor.getModId() + ":wand");
+		this.setMaxStackSize(1).setUnlocalizedName("EditorWand").setTextureName(ModEditor.getModId() + ":wand");
 	}
-	
+
 	protected static void useWand(EntityPlayer player, int x, int y, int z) {
 		if (!player.worldObj.isRemote) {
 			ItemStack stack = player.inventory.getCurrentItem();
@@ -42,7 +40,7 @@ public class Wand extends Item {
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if (world.isRemote) {
@@ -50,7 +48,7 @@ public class Wand extends Item {
 		}
 		return true;
 	}
-	
+
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if (!world.isRemote) {
 			if (player.capabilities.isCreativeMode) {
@@ -60,12 +58,13 @@ public class Wand extends Item {
 					int x;
 					int y;
 					int z;
-					
+
 					if (mop == null) {
 						x = (int) Math.floor(player.posX);
-				        y = (int) Math.floor(player.posY + (world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight()));
-				        z = (int) Math.floor(player.posZ);
-				        if (y > 255) {
+						y = (int) Math.floor(player.posY + (world.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight()
+								: player.getEyeHeight()));
+						z = (int) Math.floor(player.posZ);
+						if (y > 255) {
 							y = 255;
 						} else if (y < 0) {
 							y = 0;
@@ -89,74 +88,75 @@ public class Wand extends Item {
 		}
 		return stack;
 	}
-	
+
 	private static void editor(World world, EntityPlayer player, int x, int y, int z) {
 		if (ModEditor.instance.isSneaking) {
 			BlockAreaMode bam = ModEditor.instance.pt.getPlayerData(player);
-			switch(bam.getMode()) {
+			switch (bam.getMode()) {
 			case 0:
-				//Select Block
+				// Select Block
 				bam.getBlock(world, x, y, z);
 				EditorPacketHandler.sendBlockChange((Player) player, bam.block);
 				break;
 			case 1:
-				//Place Selected Block
+				// Place Selected Block
 				bam.setBlock(world, x, y, z);
 				break;
 			case 2:
-				//Select Area Start
+				// Select Area Start
 				bam.addStartPos(world, x, y, z);
 				EditorPacketHandler.sendStartPosChange((Player) player, x, y, z);
 				break;
 			case 3:
-				//Select Area End
+				// Select Area End
 				bam.addEndPos(world, x, y, z);
 				EditorPacketHandler.sendEndPosChange((Player) player, x, y, z);
 				break;
 			case 4:
-				//Fill Area with Selected Block
+				// Fill Area with Selected Block
 				bam.fillArea();
 				break;
 			case 5:
-				//Replaced Matching Blocks in Area with Selected Block
+				// Replaced Matching Blocks in Area with
+				// Selected Block
 				bam.setBlockInArea(world, x, y, z);
 				break;
 			case 6:
-				//Copy Area to Selected Block
+				// Copy Area to Selected Block
 				bam.copyArea(world, x, y, z);
 				break;
 			case 7:
-				//Copy Area to Selected Block
+				// Copy Area to Selected Block
 				bam.fillAreaTo(world, x, y, z);
 				break;
 			}
-		} else { //change mode
+		} else { // change mode
 			EditorPacketHandler.sendModeChange((Player) player, ModEditor.instance.pt.getPlayerData(player).changeMode());
 		}
 	}
-	
+
 	private static void rotator(EntityPlayer player) {
 		if (ModEditor.instance.isSneaking) {
 			BlockAreaMode bam = ModEditor.instance.pt.getPlayerData(player);
-			switch(bam.getRotatorMode()) {
+			switch (bam.getRotatorMode()) {
 			case 0:
-				//Mirror X
+				// Mirror X
 				bam.mirrorX();
 				break;
 			case 1:
-				//Mirror Z
+				// Mirror Z
 				bam.mirrorZ();
 				break;
 			case 2:
-				//Rotate 180
+				// Rotate 180
 				bam.rotate180();
 				break;
 			case 3:
-				//Rotate 90
+				// Rotate 90
 				bam.rotate90();
 				break;
 			case 4:
-				//Rotate 270
+				// Rotate 270
 				bam.rotate270();
 				break;
 			}
@@ -164,13 +164,13 @@ public class Wand extends Item {
 			EditorPacketHandler.sendRotatorModeChange((Player) player, ModEditor.instance.pt.getPlayerData(player).changeRotatorMode());
 		}
 	}
-	
+
 	@Override
 	public void registerIcons(IconRegister iconRegister) {
 		super.registerIcons(iconRegister);
 		this.rotatorIcon = iconRegister.registerIcon(ModEditor.getModId() + ":rwand");
 	}
-	
+
 	@Override
 	public Icon getIconFromDamage(int damage) {
 		switch (damage) {
@@ -180,7 +180,7 @@ public class Wand extends Item {
 			return super.getIconFromDamage(damage);
 		}
 	}
-	
+
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
 		return super.getUnlocalizedName(stack) + "_" + Integer.toString(stack.getItemDamage());

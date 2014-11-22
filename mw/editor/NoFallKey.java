@@ -9,9 +9,11 @@ import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
 
 public class NoFallKey extends KeyHandler {
-	
+
 	public NoFallKey() {
-		super(new KeyBinding[] { Minecraft.getMinecraft().gameSettings.keyBindSneak }, new boolean[] { false });
+		super(
+				new KeyBinding[] { Minecraft.getMinecraft().gameSettings.keyBindSneak },
+				new boolean[] { false });
 	}
 
 	@Override

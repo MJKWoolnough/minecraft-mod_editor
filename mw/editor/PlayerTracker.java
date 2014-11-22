@@ -6,9 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.common.IPlayerTracker;
 
 public class PlayerTracker implements IPlayerTracker {
-	
-	protected HashMap<String, BlockAreaMode> l = new HashMap<String, BlockAreaMode>();
-	
+
+	protected HashMap<String, BlockAreaMode>	l	= new HashMap<String, BlockAreaMode>();
+
 	@Override
 	public void onPlayerLogin(EntityPlayer player) {
 		if (!this.l.containsKey(player.username)) {
@@ -28,8 +28,9 @@ public class PlayerTracker implements IPlayerTracker {
 	}
 
 	@Override
-	public void onPlayerRespawn(EntityPlayer player) {}
-	
+	public void onPlayerRespawn(EntityPlayer player) {
+	}
+
 	public BlockAreaMode getPlayerData(EntityPlayer player) {
 		this.onPlayerLogin(player);
 		return this.l.get(player.username);
