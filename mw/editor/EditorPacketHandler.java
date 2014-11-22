@@ -2,16 +2,14 @@ package mw.editor;
 
 import java.io.IOException;
 
+import mw.library.PacketData;
+import mw.library.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 
 import com.google.common.io.ByteArrayDataInput;
 
 import cpw.mods.fml.common.network.Player;
-
-import mw.library.PacketData;
-import mw.library.PacketHandler;
 
 
 public class EditorPacketHandler extends PacketHandler {

@@ -1,13 +1,9 @@
 package mw.editor;
 
-import java.io.File;
-
 import net.minecraft.command.ServerCommandManager;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -16,8 +12,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(modid="editorwand", name="ModEditor", version="2.0.3", dependencies = "required-after:MWLibrary")
 @NetworkMod(clientSideRequired=true, serverSideRequired=true, channels = { EditorPacketHandler.CHANNEL }, packetHandler = EditorPacketHandler.class)

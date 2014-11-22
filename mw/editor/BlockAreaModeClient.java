@@ -1,12 +1,9 @@
 package mw.editor;
 
-import java.io.IOException;
-
+import mw.library.Area;
 import net.minecraftforge.common.ForgeDirection;
 
 import com.google.common.io.ByteArrayDataInput;
-
-import mw.library.Area;
 
 public class BlockAreaModeClient {
 	protected BlockData block = new BlockData();

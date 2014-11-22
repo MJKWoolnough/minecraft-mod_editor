@@ -1,9 +1,6 @@
 package mw.editor;
 
-import java.util.Iterator;
-
 import mw.library.Area;
-import mw.library.BlockManipulator;
 import mw.library.Blocks;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
