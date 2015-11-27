@@ -208,7 +208,7 @@ public class Wand extends Item {
 		case ROTATOR:
 			return this.rotatorIcon;
 		case TEMPLATE:
-			return this.rotatorIcon;
+			return this.templateIcon;
 		default:
 			return super.getIconFromDamage(damage);
 		}
