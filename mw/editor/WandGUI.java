@@ -34,7 +34,7 @@ public class WandGUI {
 				int[] area = ModEditor.instance.bam.coords;
 				int[] mmArea = ModEditor.instance.bam.area.getCoords();
 				int mode = bam.mode;
-				if (is.getItemDamage() == Wand.ROTATOR) {
+				if (is.getItemDamage() != Wand.EDITOR) {
 					mode = -1;
 				}
 				double posX = this.mc.thePlayer.prevPosX + (this.mc.thePlayer.posX - this.mc.thePlayer.prevPosX) * event.partialTicks;
@@ -203,6 +203,7 @@ public class WandGUI {
 					fr.drawStringWithShadow(I18n.getString("mw.editor.selectedBlock") + ": " + blockName + " (" + new Integer(bam.block.blockId).toString() + ") - " + new Integer(bam.block.metadata).toString(), 2, 10, 0xffffff);
 				} else if (is.getItemDamage() == Wand.ROTATOR && bam.rmode >= 0 && bam.startSet && bam.endSet) {
 					fr.drawStringWithShadow(I18n.getString("mw.editor.RMode" + Integer.toString(bam.rmode)), 2, 2, 0xffffff);
+				} else if (is.getItemDamage() == Wand.TEMPLATE) {
 				}
 			}
 		}

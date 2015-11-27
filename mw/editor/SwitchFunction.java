@@ -41,6 +41,9 @@ public class SwitchFunction extends KeyHandler {
 				is.setItemDamage(Wand.ROTATOR);
 				break;
 			case Wand.ROTATOR:
+				is.setItemDamage(Wand.TEMPLATE);
+				break;
+			case Wand.TEMPLATE:
 				is.setItemDamage(Wand.EDITOR);
 				break;
 			}

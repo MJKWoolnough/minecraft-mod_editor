@@ -1,5 +1,6 @@
 item.EditorWand_0.name=Editor Wand
 item.EditorWand_1.name=Rotator Wand
+item.EditorWand_2.name=Template Wand
 mw.editor.Mode0=1. Select Block
 mw.editor.Mode1=2. Place Selected Block
 mw.editor.Mode2=3. Select Area Start

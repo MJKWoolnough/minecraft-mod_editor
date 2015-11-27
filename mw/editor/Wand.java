@@ -13,12 +13,14 @@ public class Wand extends Item {
 
 	protected static final int	EDITOR	= 0;
 	protected static final int	ROTATOR	= 1;
+	protected static final int	TEMPLATE= 2;
 
 	private Icon			rotatorIcon;
+	private Icon			templateIcon;
 
 	public Wand(int id) {
 		super(id);
-		this.setMaxStackSize(1).setUnlocalizedName("EditorWand").setTextureName(ModEditor.getModId() + ":wand");
+		this.setMaxStackSize(1).setUnlocalizedName("EditorWand").setTextureName(ModEditor.getModId() + ":ewand");
 	}
 
 	protected static void useWand(EntityPlayer player, int x, int y, int z) {
@@ -31,6 +33,9 @@ public class Wand extends Item {
 					break;
 				case ROTATOR:
 					rotator(player);
+					break;
+				case TEMPLATE:
+					template(player);
 					break;
 				default:
 					stack.setItemDamage(EDITOR);
@@ -78,6 +83,9 @@ public class Wand extends Item {
 					break;
 				case ROTATOR:
 					this.rotator(player);
+					break;
+				case TEMPLATE:
+					this.template(player);
 					break;
 				default:
 					stack.setItemDamage(EDITOR);
@@ -165,10 +173,18 @@ public class Wand extends Item {
 		}
 	}
 
+	private static void template(EntityPlayer player) {
+		if (ModEditor.instance.isSneaking) {
+		} else {
+			EditorPacketHandler.sendRotatorModeChange((Player) player, ModEditor.instance.pt.getPlayerData(player).changeRotatorMode());
+		}
+	}
+
 	@Override
 	public void registerIcons(IconRegister iconRegister) {
 		super.registerIcons(iconRegister);
 		this.rotatorIcon = iconRegister.registerIcon(ModEditor.getModId() + ":rwand");
+		this.templateIcon = iconRegister.registerIcon(ModEditor.getModId() + ":twand");
 	}
 
 	@Override
