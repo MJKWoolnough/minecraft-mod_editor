@@ -191,7 +191,7 @@ public class Wand extends Item {
 				break;
 			}
 		} else {
-			EditorPacketHandler.sendRotatorModeChange((Player) player, ModEditor.instance.pt.getPlayerData(player).changeTemplateMode());
+			EditorPacketHandler.sendTemplateModeChange((Player) player, ModEditor.instance.pt.getPlayerData(player).changeTemplateMode());
 		}
 	}
 
