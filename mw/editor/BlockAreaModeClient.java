@@ -17,6 +17,7 @@ public class BlockAreaModeClient {
 
 	protected int		mode		= -1;
 	protected int		rmode		= -1;
+	protected int		tmode		= -1;
 
 	public void setMode(int mode) {
 		this.mode = mode;
@@ -24,6 +25,10 @@ public class BlockAreaModeClient {
 
 	public void setRotatorMode(int mode) {
 		this.rmode = mode;
+	}
+
+	public void setTemplateMode(int mode) {
+		this.tmode = mode;
 	}
 
 	public void addStartPos(int x, int y, int z) {

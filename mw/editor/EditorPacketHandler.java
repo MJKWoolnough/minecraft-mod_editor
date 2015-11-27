@@ -13,16 +13,17 @@ import cpw.mods.fml.common.network.Player;
 
 public class EditorPacketHandler extends PacketHandler {
 
-	public static final String		CHANNEL			= "editormod";
-	private static final byte		MODECHANGE		= 0;
-	private static final byte		BLOCKCHANGE		= 1;
+	public static final String		CHANNEL				= "editormod";
+	private static final byte		MODECHANGE			= 0;
+	private static final byte		BLOCKCHANGE			= 1;
 	private static final byte		STARTPOSCHANGE		= 2;
 	private static final byte		ENDPOSCHANGE		= 3;
-	private static final byte		RESETAREA		= 4;
-	private static final byte		SNEAKING		= 5;
+	private static final byte		RESETAREA			= 4;
+	private static final byte		SNEAKING			= 5;
 	private static final byte		ROTATORMODECHANGE	= 6;
 	private static final byte		WANDFUNCTIONCHANGE	= 7;
-	private static final byte		USEWAND			= 8;
+	private static final byte		USEWAND				= 8;
+	private static final byte		TEMPLATEMODECHANGE	= 9;
 
 	private static EditorPacketHandler	instance;
 
@@ -60,6 +61,9 @@ public class EditorPacketHandler extends PacketHandler {
 			break;
 		case USEWAND:
 			handleUseWand(player, in);
+			break;
+		case TEMPLATEMODECHANGE:
+			handleTemplateModeChange(in);
 			break;
 		}
 		return;
@@ -99,6 +103,11 @@ public class EditorPacketHandler extends PacketHandler {
 	private void handleRotatorModeChange(ByteArrayDataInput in) {
 		int modeId = in.readInt();
 		ModEditor.instance.bam.setRotatorMode(modeId);
+	}
+
+	private void handleTemplateModeChange(ByteArrayDataInput in) {
+		int modeId = in.readInt();
+		ModEditor.instance.bam.setTemplateMode(modeId);
 	}
 
 	private void handleWandFunctionChange(Player player) {
@@ -189,6 +198,17 @@ public class EditorPacketHandler extends PacketHandler {
 		PacketData pd = new PacketData(1 + 4);
 		try {
 			pd.writeByte(ROTATORMODECHANGE);
+			pd.writeInt(mode);
+		} catch (IOException e) {
+			return;
+		}
+		EditorPacketHandler.instance.sendPacket(pd, true, player);
+	}
+
+	public static void sendTemplateModeChange(Player player, int mode) {
+		PacketData pd = new PacketData(1 + 4);
+		try {
+			pd.writeByte(TEMPLATEMODECHANGE);
 			pd.writeInt(mode);
 		} catch (IOException e) {
 			return;
