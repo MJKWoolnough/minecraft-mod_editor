@@ -35,7 +35,7 @@ public class Wand extends Item {
 					rotator(player);
 					break;
 				case TEMPLATE:
-					template(player);
+					template(player.worldObj, player, x, y, z);
 					break;
 				default:
 					stack.setItemDamage(EDITOR);
@@ -58,7 +58,10 @@ public class Wand extends Item {
 		if (!world.isRemote) {
 			if (player.capabilities.isCreativeMode) {
 				switch (stack.getItemDamage()) {
-				case EDITOR:
+				case ROTATOR:
+					this.rotator(player);
+					break;
+				default:
 					MovingObjectPosition mop = this.getMovingObjectPositionFromPlayer(world, player, true);
 					int x;
 					int y;
@@ -79,16 +82,16 @@ public class Wand extends Item {
 						y = mop.blockY;
 						z = mop.blockZ;
 					}
-					this.editor(world, player, x, y, z);
-					break;
-				case ROTATOR:
-					this.rotator(player);
-					break;
-				case TEMPLATE:
-					this.template(player);
-					break;
-				default:
-					stack.setItemDamage(EDITOR);
+					switch (stack.getItemDamage()) {
+					case EDITOR:
+						this.editor(world, player, x, y, z);
+						break;
+					case TEMPLATE:
+						this.template(world, player, x, y, z);
+						break;
+					default:
+						stack.setItemDamage(EDITOR);
+					}
 				}
 			} else {
 				stack.stackSize = 0;
@@ -173,10 +176,22 @@ public class Wand extends Item {
 		}
 	}
 
-	private static void template(EntityPlayer player) {
+	private static void template(World world, EntityPlayer player, int x, int y, int z) {
 		if (ModEditor.instance.isSneaking) {
+			BlockAreaMode bam = ModEditor.instance.pt.getPlayerData(player);
+			switch (bam.getTemplateMode()) {
+			case 0:
+				// Generate from template
+				break;
+			case 1:
+				// Create/edit Section
+				break;
+			case 2:
+				// Save Template
+				break;
+			}
 		} else {
-			EditorPacketHandler.sendRotatorModeChange((Player) player, ModEditor.instance.pt.getPlayerData(player).changeRotatorMode());
+			EditorPacketHandler.sendRotatorModeChange((Player) player, ModEditor.instance.pt.getPlayerData(player).changeTemplateMode());
 		}
 	}
 
@@ -191,6 +206,8 @@ public class Wand extends Item {
 	public Icon getIconFromDamage(int damage) {
 		switch (damage) {
 		case ROTATOR:
+			return this.rotatorIcon;
+		case TEMPLATE:
 			return this.rotatorIcon;
 		default:
 			return super.getIconFromDamage(damage);

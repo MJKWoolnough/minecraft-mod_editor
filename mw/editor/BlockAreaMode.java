@@ -18,6 +18,7 @@ public class BlockAreaMode {
 
 	protected int		mode		= -1;
 	protected int		rmode		= -1;
+	protected int           tmode           = -1;
 
 	public int changeMode() {
 		this.mode++;
@@ -36,6 +37,16 @@ public class BlockAreaMode {
 		}
 		return this.rmode;
 	}
+	
+	public int changeTemplateMode() {
+		if (this.startSet && this.endSet) {
+			this.tmode++;
+			if (this.tmode > 3) {
+				this.rmode = 0;
+			}
+		}
+		return this.rmode;
+	}
 
 	public void setMode(int modeId) {
 		this.mode = modeId;
@@ -44,6 +55,10 @@ public class BlockAreaMode {
 	public void setRotatorMode(int modeId) {
 		this.rmode = modeId;
 	}
+	
+	public void setTemplateMode(int modeId) {
+		this.tmode = modeId;
+	}
 
 	public int getMode() {
 		return this.mode;
@@ -51,6 +66,10 @@ public class BlockAreaMode {
 
 	public int getRotatorMode() {
 		return this.rmode;
+	}
+	
+	public int getTemplateMode() {
+		return this.tmode;
 	}
 
 	public void getBlock(World world, int x, int y, int z) {
