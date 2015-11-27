@@ -201,9 +201,14 @@ public class WandGUI {
 						blockName = Block.blocksList[bam.block.blockId].getLocalizedName();
 					}
 					fr.drawStringWithShadow(I18n.getString("mw.editor.selectedBlock") + ": " + blockName + " (" + new Integer(bam.block.blockId).toString() + ") - " + new Integer(bam.block.metadata).toString(), 2, 10, 0xffffff);
-				} else if (is.getItemDamage() == Wand.ROTATOR && bam.rmode >= 0 && bam.startSet && bam.endSet) {
-					fr.drawStringWithShadow(I18n.getString("mw.editor.RMode" + Integer.toString(bam.rmode)), 2, 2, 0xffffff);
-				} else if (is.getItemDamage() == Wand.TEMPLATE) {
+				} else if (bam.rmode >= 0 && bam.startSet && bam.endSet) {
+					switch (is.getItemDamage()) {
+					case Wand.ROTATOR:
+						fr.drawStringWithShadow(I18n.getString("mw.editor.RMode" + Integer.toString(bam.rmode)), 2, 2, 0xffffff);
+						break;
+					case Wand.TEMPLATE:
+						break;
+					}
 				}
 			}
 		}
