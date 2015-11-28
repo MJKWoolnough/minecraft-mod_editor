@@ -35,7 +35,11 @@ public class WandGUI {
 				int[] mmArea = ModEditor.instance.bam.area.getCoords();
 				int mode = bam.mode;
 				if (is.getItemDamage() != Wand.EDITOR) {
-					mode = -1;
+					if (is.getItemDamage() == Wand.TEMPLATE && bam.mode == 1) {
+						mode = 8;
+					} else {
+						mode = -1;
+					}
 				}
 				double posX = this.mc.thePlayer.prevPosX + (this.mc.thePlayer.posX - this.mc.thePlayer.prevPosX) * event.partialTicks;
 				double posY = this.mc.thePlayer.prevPosY + (this.mc.thePlayer.posY - this.mc.thePlayer.prevPosY) * event.partialTicks;
@@ -201,12 +205,17 @@ public class WandGUI {
 						blockName = Block.blocksList[bam.block.blockId].getLocalizedName();
 					}
 					fr.drawStringWithShadow(I18n.getString("mw.editor.selectedBlock") + ": " + blockName + " (" + new Integer(bam.block.blockId).toString() + ") - " + new Integer(bam.block.metadata).toString(), 2, 10, 0xffffff);
-				} else if (bam.rmode >= 0 && bam.startSet && bam.endSet) {
+				} else if (bam.startSet && bam.endSet) {
 					switch (is.getItemDamage()) {
 					case Wand.ROTATOR:
-						fr.drawStringWithShadow(I18n.getString("mw.editor.RMode" + Integer.toString(bam.rmode)), 2, 2, 0xffffff);
+						if (bam.rmode >= 0) {
+							fr.drawStringWithShadow(I18n.getString("mw.editor.RMode" + Integer.toString(bam.rmode)), 2, 2, 0xffffff);
+						}
 						break;
 					case Wand.TEMPLATE:
+						if (bam.tmode >= 0) {
+							fr.drawStringWithShadow(I18n.getString("mw.editor.TMode" + Integer.toString(bam.tmode)), 2, 2, 0xffffff);
+						}
 						break;
 					}
 				}

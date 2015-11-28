@@ -7,18 +7,18 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class BlockAreaMode {
 
-	protected BlockData	block		= new BlockData();
+	protected BlockData	block = new BlockData();
 	protected Area		area;
 	protected World		world;
 
 	protected boolean	startSet	= false;
 	protected boolean	endSet		= false;
 
-	protected final int[]	coords		= new int[6];
+	protected final int[]	coords	= new int[6];
 
-	protected int		mode		= -1;
-	protected int		rmode		= -1;
-	protected int           tmode           = -1;
+	protected int		    mode	= -1;
+	protected int		    rmode	= -1;
+	protected int           tmode   = -1;
 
 	public int changeMode() {
 		this.mode++;
@@ -41,11 +41,11 @@ public class BlockAreaMode {
 	public int changeTemplateMode() {
 		if (this.startSet && this.endSet) {
 			this.tmode++;
-			if (this.tmode > 3) {
-				this.rmode = 0;
+			if (this.tmode > 2) {
+				this.tmode = 0;
 			}
 		}
-		return this.rmode;
+		return this.tmode;
 	}
 
 	public void setMode(int modeId) {
