@@ -21,9 +21,9 @@ import org.lwjgl.opengl.GL11;
 
 public class WandGUI {
 
-	private static final Minecraft	mc	= Minecraft.getMinecraft();
-	private int			count	= 0;
-	private ForgeDirection		direction;
+	private static final Minecraft	mc	  = Minecraft.getMinecraft();
+	private int                     count = 0;
+	private ForgeDirection          direction;
 
 	@ForgeSubscribe
 	public void onRenderWorld(RenderWorldLastEvent event) {
@@ -33,13 +33,17 @@ public class WandGUI {
 				BlockAreaModeClient bam = ModEditor.instance.bam;
 				int[] area = ModEditor.instance.bam.coords;
 				int[] mmArea = ModEditor.instance.bam.area.getCoords();
-				int mode = bam.mode;
-				if (is.getItemDamage() != Wand.EDITOR) {
-					if (is.getItemDamage() == Wand.TEMPLATE && bam.mode == 1) {
+				int mode = -1;
+				switch (is.getItemDamage()) {
+				case Wand.EDITOR:
+					mode = bam.mode;
+				case Wand.ROTATOR:
+					break;
+				case Wand.TEMPLATE:
+					if (bam.tmode == 1) {
 						mode = 8;
-					} else {
-						mode = -1;
 					}
+					break;
 				}
 				double posX = this.mc.thePlayer.prevPosX + (this.mc.thePlayer.posX - this.mc.thePlayer.prevPosX) * event.partialTicks;
 				double posY = this.mc.thePlayer.prevPosY + (this.mc.thePlayer.posY - this.mc.thePlayer.prevPosY) * event.partialTicks;
@@ -89,7 +93,6 @@ public class WandGUI {
 				if (bam.startSet || bam.endSet) {
 
 					if (bam.startSet && bam.endSet) {
-
 						GL11.glDepthFunc(GL11.GL_GREATER);
 						this.renderBox(mmArea[0], mmArea[1], mmArea[2], mmArea[3] + 1, mmArea[4] + 1, mmArea[5] + 1, 0, 255, 0, 63);
 						GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -151,6 +154,47 @@ public class WandGUI {
 							this.renderBox(x2, y2, z2, x2 + 1, y2 + 1, z2 + 1, 0, 0, 0, 63);
 							GL11.glDepthFunc(GL11.GL_LEQUAL);
 							this.renderBox(x2, y2, z2, x2 + 1, y2 + 1, z2 + 1, 0, 0, 0, 63);
+						}
+					}
+
+					if (mode == 8) {
+						int ex = 0;
+						int dx = -1;
+						if (area[0] > area[3]) {
+							ex = 1;
+							dx = 1;
+						}
+						int dz = -1;
+						int ez = 0;
+						if (area[2] > area[5]) {
+							ez = 1;
+							dz = 1;
+						}
+						Tessellator t = Tessellator.instance;
+						GL11.glDepthFunc(GL11.GL_GREATER);
+						for (int a = 63; a < 128; a += 64) {
+							t.startDrawing(GL11.GL_LINES);
+							t.setColorRGBA(255, 255, 255, a);
+							for (int i = mmArea[0]; i <= mmArea[3]+1; i++) {
+								t.addVertex(i, mmArea[1], area[2]+ez);
+								t.addVertex(i, mmArea[1], area[2]+ez+dz);
+								t.addVertex(i, mmArea[1], area[2]+ez);
+								t.addVertex(i, mmArea[1]-1, area[2]+ez);
+							}
+							for (int j = mmArea[1]; j <= mmArea[4]+1; j++) {
+								t.addVertex(area[0]+ex, j, area[2]+ez);
+								t.addVertex(area[0]+ex+dx, j, area[2]+ez);
+								t.addVertex(area[0]+ex, j, area[2]+ez);
+								t.addVertex(area[0]+ex, j, area[2]+ez+dz);
+							}
+							for (int k = mmArea[2]; k <= mmArea[5]+1; k++) {
+								t.addVertex(area[0]+ex, mmArea[1], k);
+								t.addVertex(area[0]+ex+dx, mmArea[1], k);
+								t.addVertex(area[0]+ex, mmArea[1], k);
+								t.addVertex(area[0]+ex, mmArea[1]-1, k);
+							}
+							t.draw();
+							GL11.glDepthFunc(GL11.GL_LEQUAL);
 						}
 					}
 
