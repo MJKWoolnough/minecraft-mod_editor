@@ -97,4 +97,54 @@ public class BlockAreaModeClient {
 		this.sectionStart = -1;
 		this.sectionEnd = -1;
 	}
+
+	public boolean sectionSet(int x, int y, int z) {
+		return false;
+	}
+
+	public int[][] selectedSectionLine() {
+		return null;
+	}
+
+	public int[][] sectionLines() {
+		switch (this.sectionType) {
+		case -1:// all
+			break;
+		case 0: // x
+			break;
+		case 1: // y
+			break;
+		case 2: // z
+			break;
+		}
+		return null;
+	}
+
+	// Convert world coords to corrected template coords
+	public int[] coordsToTemplate(int x, int y, int z) {
+		x -= this.coords[0];
+		y -= this.area.getCoords()[1];
+		z -= this.coords[2];
+		if (this.coords[0] > this.coords[3]) {
+			x = -x; // + 1 // ???
+		}
+		if (this.coords[2] > this.coords[5]) {
+			z = -z; // + 1 // ???
+		}
+		return new int[]{x, y, z};
+	}
+
+	// Convert corrected template coords to world coords
+	public int[] coordsToWorld(int x, int y, int z) {
+		if (this.coords[0] > this.coords[3]) {
+			x = -x; // - 1 // ???
+		}
+		if (this.coords[2] > this.coords[5]) {
+			z = -z; // - 1 // ???
+		}
+		x += this.coords[0];
+		y += this.area.getCoords()[1];
+		z += this.coords[2];
+		return new int[]{x, y, z};
+	}
 }
