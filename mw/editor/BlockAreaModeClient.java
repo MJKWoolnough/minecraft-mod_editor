@@ -7,18 +7,19 @@ import com.google.common.io.ByteArrayDataInput;
 
 public class BlockAreaModeClient {
 
-	protected BlockData   block    = new BlockData();
-	protected Area        area     = new Area(null, 0, 0, 0, 0, 0, 0);
-	protected Template    template = new Template(this.area);
+	protected final BlockData block    = new BlockData();
+	protected final Area      area     = new Area(null, 0, 0, 0, 0, 0, 0);
 
-	protected boolean     startSet = false;
-	protected boolean     endSet   = false;
+	protected boolean         startSet = false;
+	protected boolean         endSet   = false;
 
-	protected final int[] coords   = new int[6];
+	protected final int[]     coords   = new int[6];
 
-	protected int         mode     = -1;
-	protected int         rmode    = -1;
-	protected int         tmode    = -1;
+	protected int             mode     = -1;
+	protected int             rmode    = -1;
+	protected int             tmode    = -1;
+	
+	protected int             sections = 0; // will later store the section list
 
 	public void setMode(int mode) {
 		this.mode = mode;
@@ -39,7 +40,7 @@ public class BlockAreaModeClient {
 		this.startSet = true;
 		if (this.endSet) {
 			this.area.setCoords(null, x, y, z, this.coords[3], this.coords[4], this.coords[5]);
-			this.template.reset();
+			this.resetTemplate();
 		}
 	}
 
@@ -50,7 +51,7 @@ public class BlockAreaModeClient {
 		this.endSet = true;
 		if (this.startSet) {
 			this.area.setCoords(null, this.coords[0], this.coords[1], this.coords[2], x, y, z);
-			this.template.reset();
+			this.resetTemplate();
 		}
 	}
 
@@ -85,5 +86,9 @@ public class BlockAreaModeClient {
 			}
 		}
 		return null;
+	}
+	
+	private void resetTemplate() {
+		this.sections = 0; // reset the section list
 	}
 }
