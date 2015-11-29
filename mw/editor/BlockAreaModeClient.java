@@ -7,19 +7,22 @@ import com.google.common.io.ByteArrayDataInput;
 
 public class BlockAreaModeClient {
 
-	protected final BlockData block    = new BlockData();
-	protected final Area      area     = new Area(null, 0, 0, 0, 0, 0, 0);
+	protected final BlockData block        = new BlockData();
+	protected final Area      area         = new Area(null, 0, 0, 0, 0, 0, 0);
 
-	protected boolean         startSet = false;
-	protected boolean         endSet   = false;
+	protected boolean         startSet     = false;
+	protected boolean         endSet       = false;
 
-	protected final int[]     coords   = new int[6];
+	protected final int[]     coords       = new int[6];
 
-	protected int             mode     = -1;
-	protected int             rmode    = -1;
-	protected int             tmode    = -1;
+	protected int             mode         = -1;
+	protected int             rmode        = -1;
+	protected int             tmode        = -1;
 	
-	protected int             sections = 0; // will later store the section list
+	protected int             sections     = 0; // will later store the section list
+	protected byte            sectionType  = -1;
+	protected int             sectionStart = -1;
+	protected int             sectionEnd   = -1;
 
 	public void setMode(int mode) {
 		this.mode = mode;
@@ -90,5 +93,8 @@ public class BlockAreaModeClient {
 	
 	private void resetTemplate() {
 		this.sections = 0; // reset the section list
+		this.sectionType = -1;
+		this.sectionStart = -1;
+		this.sectionEnd = -1;
 	}
 }
