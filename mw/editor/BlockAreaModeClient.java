@@ -98,26 +98,20 @@ public class BlockAreaModeClient {
 		this.sectionEnd = -1;
 	}
 
-	public boolean sectionSet(int x, int y, int z) {
-		return false;
-	}
-
-	public int[][] selectedSectionLine() {
-		return null;
-	}
-
-	public int[][] sectionLines() {
-		switch (this.sectionType) {
-		case -1:// all
-			break;
-		case 0: // x
-			break;
-		case 1: // y
-			break;
-		case 2: // z
-			break;
+	public int templateWidth() {
+		if ((this.coords[0] > this.coords[3]) == (this.coords[2] > this.coords[5])) {
+			return this.area.width();
+		} else {
+			return this.area.depth();
 		}
-		return null;
+	}
+
+	public int templateDepth() {
+		if ((this.coords[0] > this.coords[3]) == (this.coords[2] > this.coords[5])) {
+			return this.area.depth();
+		} else {
+			return this.area.width();
+		}
 	}
 
 	// Convert world coords to corrected template coords
