@@ -31,8 +31,8 @@ public class WandGUI {
 			ItemStack is = this.mc.thePlayer.inventory.getCurrentItem();
 			if (is != null && is.itemID == ModEditor.instance.wandId + 256) {
 				BlockAreaModeClient bam = ModEditor.instance.bam;
-				int[] area = ModEditor.instance.bam.coords;
-				int[] mmArea = ModEditor.instance.bam.area.getCoords();
+				int[] area = bam.coords;
+				int[] mmArea = bam.area.getCoords();
 				int mode = -1;
 				switch (is.getItemDamage()) {
 				case Wand.EDITOR:
