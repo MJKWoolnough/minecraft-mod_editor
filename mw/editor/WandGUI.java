@@ -158,40 +158,37 @@ public class WandGUI {
 					}
 
 					if (mode == 8) {
-						int ex = 0;
-						int dx = -1;
-						if (area[0] > area[3]) {
-							ex = 1;
-							dx = 1;
-						}
-						int dz = -1;
-						int ez = 0;
-						if (area[2] > area[5]) {
-							ez = 1;
-							dz = 1;
-						}
 						Tessellator t = Tessellator.instance;
 						GL11.glDepthFunc(GL11.GL_GREATER);
+						int tWidth = bam.templateWidth();
+						int tHeight = bam.templateHeight();
+						int tDepth = bam.templateDepth();
 						for (int a = 63; a < 128; a += 64) {
 							t.startDrawing(GL11.GL_LINES);
 							t.setColorRGBA(255, 255, 255, a);
-							for (int i = mmArea[0]; i <= mmArea[3]+1; i++) {
-								t.addVertex(i, mmArea[1], area[2]+ez);
-								t.addVertex(i, mmArea[1], area[2]+ez+dz);
-								t.addVertex(i, mmArea[1], area[2]+ez);
-								t.addVertex(i, mmArea[1]-1, area[2]+ez);
+							for (int i = 0; i <= tWidth; i++) {
+								addVertices(
+									bam.coordsToWorld(i, 0, 0),
+									bam.coordsToWorld(i, 0, -1),
+									bam.coordsToWorld(i, 0, 0),
+									bam.coordsToWorld(i, -1, 0)
+								);
 							}
-							for (int j = mmArea[1]; j <= mmArea[4]+1; j++) {
-								t.addVertex(area[0]+ex, j, area[2]+ez);
-								t.addVertex(area[0]+ex+dx, j, area[2]+ez);
-								t.addVertex(area[0]+ex, j, area[2]+ez);
-								t.addVertex(area[0]+ex, j, area[2]+ez+dz);
+							for (int i = 0; i <= tHeight; i++) {
+								addVertices(
+									bam.coordsToWorld(0, i, 0),
+									bam.coordsToWorld(-1, i, 0),
+									bam.coordsToWorld(0, i, 0),
+									bam.coordsToWorld(0, i, -1)
+								);
 							}
-							for (int k = mmArea[2]; k <= mmArea[5]+1; k++) {
-								t.addVertex(area[0]+ex, mmArea[1], k);
-								t.addVertex(area[0]+ex+dx, mmArea[1], k);
-								t.addVertex(area[0]+ex, mmArea[1], k);
-								t.addVertex(area[0]+ex, mmArea[1]-1, k);
+							for (int i = 0; i <= tDepth; i++) {
+								addVertices(
+										bam.coordsToWorld(0, 0, i),
+										bam.coordsToWorld(-1, 0, i),
+										bam.coordsToWorld(0, 0, i),
+										bam.coordsToWorld(0, -1, i)
+								);
 							}
 							t.draw();
 							GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -306,6 +303,13 @@ public class WandGUI {
 		t.addVertex(x1, y2, z2);
 
 		t.draw();
+	}
+
+	private void addVertices(int[]... coords) {
+		Tessellator t = Tessellator.instance;
+		for (int i = 0; i < coords.length; i++) {
+			t.addVertex(coords[i][0], coords[i][1], coords[i][2]);
+		}
 	}
 
 	private static int min(int a, int b) {
