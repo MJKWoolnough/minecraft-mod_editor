@@ -106,6 +106,10 @@ public class BlockAreaModeClient {
 		}
 	}
 
+	public int templateHeight() {
+		return this.area.height();
+	}
+
 	public int templateDepth() {
 		if ((this.coords[0] > this.coords[3]) == (this.coords[2] > this.coords[5])) {
 			return this.area.depth();
