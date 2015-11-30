@@ -264,7 +264,7 @@ public class WandGUI {
 		}
 	}
 
-	private void renderBox(int x1, int y1, int z1, int x2, int y2, int z2, int r, int g, int b, int a) {
+	private static void renderBox(int x1, int y1, int z1, int x2, int y2, int z2, int r, int g, int b, int a) {
 		Tessellator t = Tessellator.instance;
 		t.startDrawing(GL11.GL_LINE_LOOP);
 
@@ -305,7 +305,7 @@ public class WandGUI {
 		t.draw();
 	}
 
-	private void addVertices(int[]... coords) {
+	private static void addVertices(int[]... coords) {
 		Tessellator t = Tessellator.instance;
 		for (int i = 0; i < coords.length; i++) {
 			t.addVertex(coords[i][0], coords[i][1], coords[i][2]);
