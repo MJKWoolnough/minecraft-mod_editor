@@ -63,23 +63,24 @@ public class WandGUI {
 				GL11.glColor3f(1, 1, 1);
 				GL11.glLineWidth(3);
 
-				MovingObjectPosition mop = ModEditor.instance.wand.getMovingObjectPositionFromPlayer(this.mc.theWorld, this.mc.thePlayer, true);
-				int x1;
-				int y1;
-				int z1;
-				if (mop != null && mop.typeOfHit == EnumMovingObjectType.TILE) {
-					x1 = mop.blockX;
-					y1 = mop.blockY;
-					z1 = mop.blockZ;
-				} else {
-					x1 = (int) Math.floor(this.mc.thePlayer.posX);
-					y1 = (int) Math.floor(this.mc.thePlayer.posY + (this.mc.theWorld.isRemote ? this.mc.thePlayer.getEyeHeight() - this.mc.thePlayer.getDefaultEyeHeight()
-							: this.mc.thePlayer.getEyeHeight()));
-					z1 = (int) Math.floor(this.mc.thePlayer.posZ);
-					if (y1 > 255) {
-						y1 = 255;
-					} else if (y1 < 0) {
-						y1 = 0;
+				int x1 = 0;
+				int y1 = 0;
+				int z1 = 0;
+				if (mode != 8) {
+					MovingObjectPosition mop = ModEditor.instance.wand.getMovingObjectPositionFromPlayer(this.mc.theWorld, this.mc.thePlayer, true);
+					if (mop != null && mop.typeOfHit == EnumMovingObjectType.TILE) {
+						x1 = mop.blockX;
+						y1 = mop.blockY;
+						z1 = mop.blockZ;
+					} else {
+						x1 = (int) Math.floor(this.mc.thePlayer.posX);
+						y1 = (int) Math.floor(this.mc.thePlayer.posY + (this.mc.theWorld.isRemote ? this.mc.thePlayer.getEyeHeight() - this.mc.thePlayer.getDefaultEyeHeight() : this.mc.thePlayer.getEyeHeight()));
+						z1 = (int) Math.floor(this.mc.thePlayer.posZ);
+						if (y1 > 255) {
+							y1 = 255;
+						} else if (y1 < 0) {
+							y1 = 0;
+						}
 					}
 				}
 
@@ -192,6 +193,42 @@ public class WandGUI {
 							}
 							t.draw();
 							GL11.glDepthFunc(GL11.GL_LEQUAL);
+						}
+						int[] d = TemplateBlockSelector.getSelector(this.mc.thePlayer);
+						if (d != null) {
+							for (int a = 63; a < 128; a += 64) {
+								t.startDrawing(GL11.GL_LINES);
+								t.setColorRGBA(255, 0, 0, a);
+								int i = d[0];
+								switch(i) {
+								case 0:
+									addVertices(
+											bam.coordsToWorld(i, 0, 0),
+											bam.coordsToWorld(i, 0, -1),
+											bam.coordsToWorld(i, 0, 0),
+											bam.coordsToWorld(i, -1, 0)
+									);
+									break;
+								case 1:
+									addVertices(
+											bam.coordsToWorld(0, i, 0),
+											bam.coordsToWorld(-1, i, 0),
+											bam.coordsToWorld(0, i, 0),
+											bam.coordsToWorld(0, i, -1)
+										);
+									break;
+								case 2:
+									addVertices(
+											bam.coordsToWorld(0, 0, i),
+											bam.coordsToWorld(-1, 0, i),
+											bam.coordsToWorld(0, 0, i),
+											bam.coordsToWorld(0, -1, i)
+									);
+									break;
+								}
+								t.draw();
+								GL11.glDepthFunc(GL11.GL_LEQUAL);
+							}
 						}
 					}
 
