@@ -138,6 +138,25 @@ public class BlockAreaModeClient {
 		return new int[]{x, y, z};
 	}
 
+	public double[] coordsToTemplate(double x, double y, double z) {
+		x -= this.coords[0];
+		y -= this.area.getCoords()[1];
+		z -= this.coords[2];
+		if (this.coords[0] > this.coords[3] && this.coords[2] > this.coords[5]) {
+			x = 1 - x;
+			z = 1 - z;
+		} else if (this.coords[0] > this.coords[3]) {
+			double ox = x;
+			x = z;
+			z = 1 - ox;
+		} else if (this.coords[2] > this.coords[5]) {
+			double ox = x;
+			x = 1 - z;
+			z = ox;
+		}
+		return new double[]{x, y, z};
+	}
+
 	// Convert corrected template coords to world coords
 	public int[] coordsToWorld(int x, int y, int z) {
 		if (this.coords[0] > this.coords[3] && this.coords[2] > this.coords[5]) {
