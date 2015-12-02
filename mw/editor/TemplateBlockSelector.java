@@ -63,7 +63,7 @@ public class TemplateBlockSelector {
 			}
 		}
 		
-		return null;
+		return new int[] {-1, -1};
 	}
 	
 	private static double intersectCuboid(double[] pos, double vector[], double x1, double y1, double z1, double x2, double y2, double z2) {
