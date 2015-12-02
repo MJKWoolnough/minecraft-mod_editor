@@ -16,16 +16,21 @@ public class TemplateBlockSelector {
 
 		BlockAreaModeClient bam = ModEditor.instance.bam;
 		
-		double[] pos = bam.coordsToTemplate(
+		double[] pos = new double[]{
 			player.prevPosX + (player.posX - player.prevPosX),
 			player.prevPosY + (player.posY - player.prevPosY) + (double)(player.worldObj.isRemote ? player.getEyeHeight() - player.getDefaultEyeHeight() : player.getEyeHeight()),
 			player.prevPosZ + (player.posZ - player.prevPosZ)
-		);
+		};
 		double[] vector = bam.coordsToTemplate( 
-				(double)(MathHelper.sin(-playerY * DEGtoRAD - (float)Math.PI) * pitchC),
-				(double) MathHelper.sin(-playerP * DEGtoRAD),
-				(double)(MathHelper.cos(-playerY * DEGtoRAD - (float)Math.PI) * pitchC)
+				pos[0] + (double)(MathHelper.sin(-playerY * DEGtoRAD - (float)Math.PI) * pitchC),
+				pos[1] + (double) MathHelper.sin(-playerP * DEGtoRAD),
+				pos[2] + (double)(MathHelper.cos(-playerY * DEGtoRAD - (float)Math.PI) * pitchC)
 		);
+
+		pos = bam.coordsToTemplate(pos[0], pos[1], pos[2]);
+		vector[0] -= pos[0];
+		vector[1] -= pos[1];
+		vector[2] -= pos[2];
 
 		double checkDistance = 5.0D;
 		if (player instanceof EntityPlayerMP) {
