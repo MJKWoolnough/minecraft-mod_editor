@@ -159,6 +159,7 @@ public class WandGUI {
 					}
 
 					if (mode == 8) {
+						int[] d = TemplateBlockSelector.getSelector(this.mc.thePlayer);
 						Tessellator t = Tessellator.instance;
 						GL11.glDepthFunc(GL11.GL_GREATER);
 						int tWidth = bam.templateWidth();
@@ -168,68 +169,71 @@ public class WandGUI {
 							t.startDrawing(GL11.GL_LINES);
 							t.setColorRGBA(255, 255, 255, a);
 							for (int i = 0; i <= tWidth; i++) {
-								addVertices(
-									bam.coordsToWorld(i, 0, 0),
-									bam.coordsToWorld(i, 0, -1),
-									bam.coordsToWorld(i, 0, 0),
-									bam.coordsToWorld(i, -1, 0)
-								);
+								if (d[0] != 0 || d[1] != i) {
+									addVertices(
+										bam.coordsToWorld(i, 0, 0),
+										bam.coordsToWorld(i, 0, -1),
+										bam.coordsToWorld(i, 0, 0),
+										bam.coordsToWorld(i, -1, 0)
+									);
+								}
 							}
 							for (int i = 0; i <= tHeight; i++) {
-								addVertices(
-									bam.coordsToWorld(0, i, 0),
-									bam.coordsToWorld(-1, i, 0),
-									bam.coordsToWorld(0, i, 0),
-									bam.coordsToWorld(0, i, -1)
-								);
+								if (d[0] != 1 || d[1] != i) {
+									addVertices(
+										bam.coordsToWorld(0, i, 0),
+										bam.coordsToWorld(-1, i, 0),
+										bam.coordsToWorld(0, i, 0),
+										bam.coordsToWorld(0, i, -1)
+									);
+								}
 							}
 							for (int i = 0; i <= tDepth; i++) {
-								addVertices(
-										bam.coordsToWorld(0, 0, i),
-										bam.coordsToWorld(-1, 0, i),
-										bam.coordsToWorld(0, 0, i),
-										bam.coordsToWorld(0, -1, i)
-								);
-							}
-							t.draw();
-							GL11.glDepthFunc(GL11.GL_LEQUAL);
-						}
-						int[] d = TemplateBlockSelector.getSelector(this.mc.thePlayer);
-						if (d != null) {
-							int i = d[1];
-							GL11.glDepthFunc(GL11.GL_GREATER);
-							for (int a = 63; a < 128; a += 64) {
-								t.startDrawing(GL11.GL_LINES);
-								t.setColorRGBA(255, 0, 0, a);
-								switch(d[0]) {
-								case 0:
-									addVertices(
-											bam.coordsToWorld(i, 0, 0),
-											bam.coordsToWorld(i, 0, -1),
-											bam.coordsToWorld(i, 0, 0),
-											bam.coordsToWorld(i, -1, 0)
-									);
-									break;
-								case 1:
-									addVertices(
-											bam.coordsToWorld(0, i, 0),
-											bam.coordsToWorld(-1, i, 0),
-											bam.coordsToWorld(0, i, 0),
-											bam.coordsToWorld(0, i, -1)
-										);
-									break;
-								case 2:
+								if (d[0] != 2 || d[1] != i) {
 									addVertices(
 											bam.coordsToWorld(0, 0, i),
 											bam.coordsToWorld(-1, 0, i),
 											bam.coordsToWorld(0, 0, i),
 											bam.coordsToWorld(0, -1, i)
 									);
-									break;
 								}
-								t.draw();
-								GL11.glDepthFunc(GL11.GL_LEQUAL);
 							}
+							t.draw();
+							GL11.glDepthFunc(GL11.GL_LEQUAL);
+						}
+						int i = d[1];
+						GL11.glDepthFunc(GL11.GL_GREATER);
+						for (int a = 63; a < 128; a += 64) {
+							t.startDrawing(GL11.GL_LINES);
+							t.setColorRGBA(255, 0, 0, a);
+							switch(d[0]) {
+							case 0:
+								addVertices(
+										bam.coordsToWorld(i, 0, 0),
+										bam.coordsToWorld(i, 0, -1),
+										bam.coordsToWorld(i, 0, 0),
+										bam.coordsToWorld(i, -1, 0)
+								);
+								break;
+							case 1:
+								addVertices(
+										bam.coordsToWorld(0, i, 0),
+										bam.coordsToWorld(-1, i, 0),
+										bam.coordsToWorld(0, i, 0),
+										bam.coordsToWorld(0, i, -1)
+									);
+								break;
+							case 2:
+								addVertices(
+										bam.coordsToWorld(0, 0, i),
+										bam.coordsToWorld(-1, 0, i),
+										bam.coordsToWorld(0, 0, i),
+										bam.coordsToWorld(0, -1, i)
+								);
+								break;
+							}
+							t.draw();
+							GL11.glDepthFunc(GL11.GL_LEQUAL);
 						}
 					}
 
