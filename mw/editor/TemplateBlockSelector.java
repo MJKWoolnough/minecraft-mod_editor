@@ -49,17 +49,17 @@ public class TemplateBlockSelector {
 		}
 
 		if (d <= checkDistance) {
-			int x = (int)Math.floor(pos[0] + vector[0] * d);
-			int y = (int)Math.floor(pos[1] + vector[1] * d);
-			int z = (int)Math.floor(pos[2] + vector[2] * d);
-			if (y == -1 && z == -1) {
-				return new int[] { 0, x };
+			double x = pos[0] + vector[0] * d;
+			if (x > 0) {
+				return new int[] { 0, (int)Math.floor(x) };
 			}
-			if (x == -1 && z == -1) {
-				return new int[] { 1, y };
+			double y = pos[1] + vector[1] * d;
+			if (y > 0) {
+				return new int[] { 1, (int)Math.floor(y) };
 			}
-			if (x == -1 && y == -1) {
-				return new int[] { 2, z };
+			double z = pos[2] + vector[2] * d;
+			if (z > 0) {
+				return new int[] { 2, (int)Math.floor(z) };
 			}
 		}
 		
