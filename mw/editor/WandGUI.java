@@ -196,11 +196,12 @@ public class WandGUI {
 						}
 						int[] d = TemplateBlockSelector.getSelector(this.mc.thePlayer);
 						if (d != null) {
+							int i = d[1];
+							GL11.glDepthFunc(GL11.GL_GREATER);
 							for (int a = 63; a < 128; a += 64) {
 								t.startDrawing(GL11.GL_LINES);
 								t.setColorRGBA(255, 0, 0, a);
-								int i = d[0];
-								switch(i) {
+								switch(d[0]) {
 								case 0:
 									addVertices(
 											bam.coordsToWorld(i, 0, 0),
