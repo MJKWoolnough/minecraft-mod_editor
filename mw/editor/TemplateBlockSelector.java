@@ -65,6 +65,30 @@ public class TemplateBlockSelector {
 				toRet[0] = 2;
 				toRet[1] = (int)Math.floor(z);
 			}
+			if (toRet[0] > -1) {
+				if (bam.sectionType != -1 && bam.sectionType != toRet[0]) {
+					toRet[0] = -1;
+					toRet[1] = -1;
+				} else {
+					switch (toRet[0]) {
+					case 0:
+						if (toRet[1] == bam.templateWidth()) {
+							toRet[1]--;
+						}
+						break;
+					case 1:
+						if (toRet[1] == bam.templateHeight()) {
+							toRet[1]--;
+						}
+						break;
+					case 2:
+						if (toRet[1] == bam.templateDepth()) {
+							toRet[1]--;
+						}
+						break;
+					}
+				}
+			}
 		}
 		return toRet;
 	}
