@@ -5,9 +5,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.MathHelper;
 
 public class TemplateBlockSelector {
-	
+
 	private static final float DEGtoRAD = (float) Math.PI / 180;
-	
+
 	public static int[] getSelector(EntityPlayer player) {
 		
 		float playerP = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch);
@@ -48,22 +48,25 @@ public class TemplateBlockSelector {
 			d = Math.min(d, intersectCuboid(pos, vector, -1, -1, 0, 0, 0, bam.templateDepth()));
 		}
 
+		int[] toRet = new int[]{ -1, -1 };
+
 		if (d <= checkDistance) {
 			double x = pos[0] + vector[0] * d;
-			if (x > 0) {
-				return new int[] { 0, (int)Math.floor(x) };
-			}
 			double y = pos[1] + vector[1] * d;
-			if (y > 0) {
-				return new int[] { 1, (int)Math.floor(y) };
-			}
 			double z = pos[2] + vector[2] * d;
-			if (z > 0) {
-				return new int[] { 2, (int)Math.floor(z) };
+
+			if (x > y && x > z) {
+				toRet[0] = 0;
+				toRet[1] = (int)Math.floor(x);
+			} else if (y > x && y > z) {
+				toRet[0] = 1;
+				toRet[1] = (int)Math.floor(y);
+			} else if (z > x && z > y) {
+				toRet[0] = 2;
+				toRet[1] = (int)Math.floor(z);
 			}
 		}
-		
-		return new int[] {-1, -1};
+		return toRet;
 	}
 	
 	private static double intersectCuboid(double[] pos, double vector[], double x1, double y1, double z1, double x2, double y2, double z2) {
