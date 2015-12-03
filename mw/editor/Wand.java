@@ -49,7 +49,13 @@ public class Wand extends Item {
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if (world.isRemote) {
-			EditorPacketHandler.sendUseWand(x, y, z);
+			switch (stack.getItemDamage()) {
+			case TEMPLATE:
+				this.template(world, player, x, y, z);
+				break;
+			default:
+				EditorPacketHandler.sendUseWand(x, y, z);
+			}
 		}
 		return true;
 	}
@@ -178,13 +184,14 @@ public class Wand extends Item {
 
 	private static void template(World world, EntityPlayer player, int x, int y, int z) {
 		if (ModEditor.instance.isSneaking) {
-			BlockAreaMode bam = ModEditor.instance.pt.getPlayerData(player);
-			switch (bam.getTemplateMode()) {
+			BlockAreaModeClient bam = ModEditor.instance.bam;
+			switch (bam.tmode) {
 			case 0:
 				// Generate from template
 				break;
 			case 1:
 				// Create/edit Section
+				int[] d = TemplateBlockSelector.getSelector(player);
 				break;
 			case 2:
 				// Save Template
