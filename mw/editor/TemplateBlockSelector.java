@@ -44,7 +44,7 @@ public class TemplateBlockSelector {
 		if (bam.sectionType == -1 || bam.sectionType == 1) {
 			d = Math.min(d, intersectCuboid(pos, vector, -1, 0, -1, 0, bam.templateHeight(), 0));
 		}
-		if (bam.sectionType == -1 || bam.sectionType == 3) {
+		if (bam.sectionType == -1 || bam.sectionType == 2) {
 			d = Math.min(d, intersectCuboid(pos, vector, -1, -1, 0, 0, 0, bam.templateDepth()));
 		}
 
