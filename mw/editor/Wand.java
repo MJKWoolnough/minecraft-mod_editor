@@ -192,6 +192,17 @@ public class Wand extends Item {
 			case 1:
 				// Create/edit Section
 				int[] d = TemplateBlockSelector.getSelector(player);
+				if (d[0] != -1) {
+					if (bam.sectionType != -1) {
+						if (d[1] >= bam.sectionStart) {
+							bam.sectionEnd = d[1];
+							bam.configureSection();
+						}
+					} else {
+						bam.sectionType = d[0];
+						bam.sectionStart = d[1];
+					}
+				}
 				break;
 			case 2:
 				// Save Template
