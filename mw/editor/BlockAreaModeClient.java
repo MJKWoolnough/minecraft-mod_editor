@@ -175,4 +175,8 @@ public class BlockAreaModeClient {
 		z += this.coords[2];
 		return new int[]{x, y, z};
 	}
+
+	public void configureSection() {
+		sectionType = -1;
+	}
 }
