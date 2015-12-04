@@ -165,7 +165,7 @@ public class WandGUI {
 						int tWidth = bam.templateWidth();
 						int tHeight = bam.templateHeight();
 						int tDepth = bam.templateDepth();
-						if (bam.sectionStart != -1) {
+						if (bam.sectionType != -1) {
 							for (int a = 63; a < 128; a += 64) {
 								t.startDrawing(GL11.GL_LINES);
 								t.setColorRGBA(255, 255, 255, a);
@@ -181,6 +181,7 @@ public class WandGUI {
 											);
 										}
 									}
+									break;
 								case 1:
 									for (int i = bam.sectionStart; i < tHeight; i++) {
 										if (d[1] != i) {
@@ -192,6 +193,7 @@ public class WandGUI {
 											);
 										}
 									}
+									break;
 								case 2:
 									for (int i = bam.sectionStart; i < tDepth; i++) {
 										if (d[1] != i) {
@@ -203,6 +205,7 @@ public class WandGUI {
 											);
 										}
 									}
+									break;
 								}
 								t.draw();
 								GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -227,6 +230,7 @@ public class WandGUI {
 											bam.coordsToWorld(d[1]+1, -1, 0)
 										);
 									}
+									break;
 								case 1:
 									addVertices(
 										bam.coordsToWorld(0, bam.sectionStart, 0),
@@ -242,6 +246,7 @@ public class WandGUI {
 											bam.coordsToWorld(0, d[1]+1, -1)
 										);
 									}
+									break;
 								case 2:
 									addVertices(
 										bam.coordsToWorld(0, 0, bam.sectionStart),
@@ -257,6 +262,7 @@ public class WandGUI {
 											bam.coordsToWorld(0, -1, d[1]+1)
 										);
 									}
+									break;
 								}
 								t.draw();
 								GL11.glDepthFunc(GL11.GL_LEQUAL);
