@@ -20,7 +20,7 @@ public class BlockAreaModeClient {
 	protected int             tmode        = -1;
 	
 	protected int             sections     = 0; // will later store the section list
-	protected byte            sectionType  = -1;
+	protected int             sectionType  = -1;
 	protected int             sectionStart = -1;
 	protected int             sectionEnd   = -1;
 
@@ -95,7 +95,6 @@ public class BlockAreaModeClient {
 		this.sections = 0; // reset the section list
 		this.sectionType = -1;
 		this.sectionStart = -1;
-		this.sectionEnd = -1;
 	}
 
 	public int templateWidth() {
